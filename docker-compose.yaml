@@ -1,0 +1,53 @@
+name: hw1-prototype
+services:
+  nginx:
+    image: bitnami/nginx:1.27.0
+    #command: [nginx, '-T']
+    volumes:
+      - ./services/nginx/app.conf:/opt/bitnami/nginx/conf/server_blocks/app.conf
+      - ./public:/app
+    ports:
+      - "8080:80"
+      - "8443:443"
+    networks:
+      - front
+
+  php-fpm:
+    build:
+      context: ./services/php-fpm
+      dockerfile: php-fpm.Dockerfile
+    environment:
+      - PHP_FPM_LISTEN_ADDRESS=9000
+      - PHP_DATE_TIMEZONE=UTC
+      - PHP_ENABLE_OPCACHE=true
+      - PHP_MEMORY_LIMIT=256M
+    volumes:
+      #- ./services/php-fpm/app.conf:/opt/bitnami/php/etc/php-fpm.conf
+      - ./:/app
+    networks:
+      - front
+      - back
+
+  db:
+    image: bitnami/postgresql:16.3.0
+    secrets:
+      - postgresql-password
+    environment:
+      - POSTGRESQL_PASSWORD_FILE=/run/secrets/postgresql-password
+    volumes:
+      - db-data:/bitnami/postgresql
+    networks:
+      - back
+    ports:
+      - "25432:5432"
+
+volumes:
+  db-data: ~
+
+networks:
+  front: ~
+  back: ~
+
+secrets:
+  postgresql-password: 
+    file: ./services/postgresql/password.txt

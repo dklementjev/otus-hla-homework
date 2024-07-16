@@ -1,0 +1,27 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        homework_user_provider: 
+            id: App\Security\UserProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: homework_user_provider
+            stateless: true
+
+            access_token:
+                token_handler: App\Security\AccessTokenHandler
+                
+
+    access_control:
+        - {path: '^/post', roles: ROLE_USER}
+        - {path: '^/friend', roles: ROLE_USER}
+        - {path: '^/dialog', roles: ROLE_USER}
