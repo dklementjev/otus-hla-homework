@@ -24,6 +24,7 @@ services:
     volumes:
       #- ./services/php-fpm/app.conf:/opt/bitnami/php/etc/php-fpm.conf
       - ./:/app
+      - ./services/php-fpm/app-php.ini:/opt/bitnami/php/etc/conf.d/app.ini
     networks:
       - front
       - back
