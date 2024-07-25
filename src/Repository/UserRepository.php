@@ -50,6 +50,18 @@ SQL;
         return $userId ? $this->getById((int) $userId) : null;
     }
 
+    public function count(): int
+    {
+        $sql = <<<'SQL'
+SELECT COUNT(id) FROM app_users
+SQL;
+        $sth = $this->dbConnection->executeQuery($sql);
+        /** @var false|array{0: int} */
+        $row = $sth->fetchNumeric();
+
+        return $row ? (int) $row[0] : 0;
+    }
+
     /**
      * @param array{id: int, first_name: string, last_name: string, bio: string, birthdate: string, city: string, pass: string} $rawData
      */

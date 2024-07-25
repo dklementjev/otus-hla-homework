@@ -33,4 +33,9 @@ class User
     {
         return $this->userRepository->getById($userId);
     }
+
+    public function count(): int
+    {
+        return $this->userRepository->count();
+    }
 }
