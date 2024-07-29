@@ -63,14 +63,36 @@ SQL;
     }
 
     /**
-     * @param array{id: int, first_name: string, last_name: string, bio: string, birthdate: string, city: string, pass: string} $rawData
+     * @return User[]
      */
-    protected function hydrate(?array $rawData): ?User
+    public function findByNamePrefix(string $firstNamePrefix, string $lastNamePrefix): array
     {
-        if (!$rawData) {
-            return null;
+        $res = [];
+
+        $sql = <<<'SQL'
+        SELECT * FROM app_users AS u WHERE 
+            u.first_name LIKE CONCAT(:first_name::text, '%') AND 
+            u.last_name LIKE CONCAT(:last_name::text, '%')
+SQL;
+        $sth = $this->dbConnection->executeQuery(
+            $sql, 
+            [
+                'first_name' => $firstNamePrefix, 
+                'last_name' => $lastNamePrefix,
+            ]
+        );
+        while ($row = $sth->fetchAssociative()) {
+            $res[] = $this->hydrate($row);
         }
 
+        return $res;
+    }
+
+    /**
+     * @param array{id: int, first_name: string, last_name: string, bio: string, birthdate: string, city: string, pass: string} $rawData
+     */
+    protected function hydrate(array $rawData): User
+    {
         return (new User($rawData['id']))
             ->setFirstName($rawData['first_name'])
             ->setLastName($rawData['last_name'])

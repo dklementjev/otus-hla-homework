@@ -38,4 +38,12 @@ class User
     {
         return $this->userRepository->count();
     }
+
+    /**
+     * @return Model\User[]
+     */
+    public function findByNamePrefix(string $firstNamePrefix, string $lastNamePrefix): array
+    {
+        return $this->userRepository->findByNamePrefix($firstNamePrefix, $lastNamePrefix);
+    }
 }
