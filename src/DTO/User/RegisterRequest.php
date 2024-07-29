@@ -4,7 +4,7 @@ namespace App\DTO\User;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-readonly class RegisterRequest
+final readonly class RegisterRequest
 {
     public function __construct(
         #[Assert\NotBlank]

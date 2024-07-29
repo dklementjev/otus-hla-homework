@@ -4,10 +4,10 @@ namespace App\DTO\User;
 
 use App\Model;
 
-readonly class User
+final readonly class User
 {
     public function __construct(
-        public readonly string $id,
+        public readonly ?int $id,
         public readonly string $first_name,
         public readonly string $second_name,
         public readonly string $birthdate,

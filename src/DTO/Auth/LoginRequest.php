@@ -4,7 +4,7 @@ namespace App\DTO\Auth;
 
 use SensitiveParameter;
 
-readonly class LoginRequest
+final readonly class LoginRequest
 {
     public function __construct(
         public string $id, 

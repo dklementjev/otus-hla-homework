@@ -4,7 +4,7 @@ namespace App\DTO\User;
 
 use App\Model;
 
-readonly class GetByIdResponse
+final readonly class GetByIdResponse
 {
     public function __construct(
         public ?int $id,
