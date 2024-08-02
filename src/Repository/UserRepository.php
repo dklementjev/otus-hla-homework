@@ -71,8 +71,8 @@ SQL;
 
         $sql = <<<'SQL'
         SELECT * FROM app_users AS u WHERE 
-            u.first_name LIKE CONCAT(:first_name::text, '%') AND 
-            u.last_name LIKE CONCAT(:last_name::text, '%')
+            u.first_name ILIKE CONCAT(:first_name::text, '%') AND 
+            u.last_name ILIKE CONCAT(:last_name::text, '%')
 SQL;
         $sth = $this->dbConnection->executeQuery(
             $sql, 
