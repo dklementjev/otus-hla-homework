@@ -71,14 +71,15 @@ SQL;
 
         $sql = <<<'SQL'
         SELECT * FROM app_users AS u WHERE 
-            u.first_name ILIKE CONCAT(:first_name::text, '%') AND 
-            u.last_name ILIKE CONCAT(:last_name::text, '%')
+            starts_with(lower(u.first_name), :first_name::text) AND 
+            starts_with(lower(u.last_name), :last_name::text)
+        ORDER BY u.id
 SQL;
         $sth = $this->dbConnection->executeQuery(
             $sql, 
             [
-                'first_name' => $firstNamePrefix, 
-                'last_name' => $lastNamePrefix,
+                'first_name' => mb_strtolower($firstNamePrefix), 
+                'last_name' => mb_strtolower($lastNamePrefix),
             ]
         );
         while ($row = $sth->fetchAssociative()) {
