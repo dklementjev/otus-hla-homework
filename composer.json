@@ -29,6 +29,7 @@
         "symfony/yaml": "6.4.*"
     },
     "require-dev": {
+        "fakerphp/faker": "^1.23",
         "symfony/web-profiler-bundle": "^6.4"
     },
     "config": {

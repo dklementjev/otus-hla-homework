@@ -50,15 +50,50 @@ SQL;
         return $userId ? $this->getById((int) $userId) : null;
     }
 
+    public function count(): int
+    {
+        $sql = <<<'SQL'
+SELECT COUNT(id) FROM app_users
+SQL;
+        $sth = $this->dbConnection->executeQuery($sql);
+        /** @var false|array{0: int} */
+        $row = $sth->fetchNumeric();
+
+        return $row ? (int) $row[0] : 0;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function findByNamePrefix(string $firstNamePrefix, string $lastNamePrefix): array
+    {
+        $res = [];
+
+        $sql = <<<'SQL'
+        SELECT * FROM app_users AS u WHERE 
+            starts_with(lower(u.first_name), :first_name::text) AND 
+            starts_with(lower(u.last_name), :last_name::text)
+        ORDER BY u.id
+SQL;
+        $sth = $this->dbConnection->executeQuery(
+            $sql, 
+            [
+                'first_name' => mb_strtolower($firstNamePrefix), 
+                'last_name' => mb_strtolower($lastNamePrefix),
+            ]
+        );
+        while ($row = $sth->fetchAssociative()) {
+            $res[] = $this->hydrate($row);
+        }
+
+        return $res;
+    }
+
     /**
      * @param array{id: int, first_name: string, last_name: string, bio: string, birthdate: string, city: string, pass: string} $rawData
      */
-    protected function hydrate(?array $rawData): ?User
+    protected function hydrate(array $rawData): User
     {
-        if (!$rawData) {
-            return null;
-        }
-
         return (new User($rawData['id']))
             ->setFirstName($rawData['first_name'])
             ->setLastName($rawData['last_name'])

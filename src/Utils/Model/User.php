@@ -33,4 +33,17 @@ class User
     {
         return $this->userRepository->getById($userId);
     }
+
+    public function count(): int
+    {
+        return $this->userRepository->count();
+    }
+
+    /**
+     * @return Model\User[]
+     */
+    public function findByNamePrefix(string $firstNamePrefix, string $lastNamePrefix): array
+    {
+        return $this->userRepository->findByNamePrefix($firstNamePrefix, $lastNamePrefix);
+    }
 }

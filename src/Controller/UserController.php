@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\DTO;
-use App\DTO\User\GetByIdResponse;
+use App\Model\User;
 use App\Utils;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -36,6 +38,26 @@ class UserController
             throw new NotFoundHttpException("User not found");
         }
         
-        return new JsonResponse(GetByIdResponse::fromModel($user));
+        return new JsonResponse(DTO\User\GetByIdResponse::fromModel($user));
+    }
+
+    #[Route(path: '/search', methods: ['GET'], name: 'search')]
+    public function search(Request $request): Response
+    {
+        $firstName = $request->query->get("first_name");
+        $lastName = $request->query->get("last_name");
+
+        if (empty($firstName) || empty($lastName)) {
+            throw new BadRequestHttpException("Either first or last name is empty");
+        }
+        $users = $this->userUtils->findByNamePrefix($firstName, $lastName);
+
+        $jsonItems = array_map(static fn (User $user) => DTO\User\User::fromModel($user), $users);
+
+        $json = [
+            'items' => $jsonItems,
+        ];
+
+        return new JsonResponse($json);
     }
 }

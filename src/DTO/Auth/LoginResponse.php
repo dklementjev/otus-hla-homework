@@ -2,7 +2,7 @@
 
 namespace App\DTO\Auth;
 
-readonly class LoginResponse
+final readonly class LoginResponse
 {
     public function __construct(
         public string $token
