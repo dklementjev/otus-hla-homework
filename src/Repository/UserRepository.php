@@ -7,9 +7,17 @@ use Doctrine\DBAL\Connection;
 
 class UserRepository
 {
+    protected readonly Connection $roConnection;
+
+    protected readonly Connection $rwConnection;
+
     public function __construct(
-        protected readonly Connection $dbConnection
-    ) {}
+        Connection $dbConnection,
+        Connection $slaveConnection
+    ) {
+        $this->rwConnection = $dbConnection;
+        $this->roConnection = $slaveConnection;
+    }
 
     public function create(): User
     {
@@ -21,7 +29,7 @@ class UserRepository
         $sql = 'SELECT * FROM app_users AS u WHERE u.id=:user_id';
 
         return $this->hydrate(
-            $this->dbConnection->fetchAssociative($sql, ['user_id' => $userId ]) ?: null
+            $this->roConnection->fetchAssociative($sql, ['user_id' => $userId ]) ?: null
         );
     }
 
@@ -32,7 +40,7 @@ INSERT INTO app_users(first_name, last_name, birthdate, bio, city, pass)
 VALUES (:first_name, :last_name, :birthdate, :bio, :city, :password_hash)
 SQL;
 
-        $this->dbConnection
+        $this->rwConnection
             ->executeStatement(
                 $sql, 
                 [
@@ -45,7 +53,7 @@ SQL;
                 ]
             )
         ;
-        $userId = $this->dbConnection->lastInsertId();
+        $userId = $this->rwConnection->lastInsertId();
 
         return $userId ? $this->getById((int) $userId) : null;
     }
@@ -55,7 +63,7 @@ SQL;
         $sql = <<<'SQL'
 SELECT COUNT(id) FROM app_users
 SQL;
-        $sth = $this->dbConnection->executeQuery($sql);
+        $sth = $this->roConnection->executeQuery($sql);
         /** @var false|array{0: int} */
         $row = $sth->fetchNumeric();
 
@@ -75,7 +83,7 @@ SQL;
             starts_with(lower(u.last_name), :last_name::text)
         ORDER BY u.id
 SQL;
-        $sth = $this->dbConnection->executeQuery(
+        $sth = $this->roConnection->executeQuery(
             $sql, 
             [
                 'first_name' => mb_strtolower($firstNamePrefix), 
