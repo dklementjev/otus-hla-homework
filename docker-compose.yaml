@@ -11,7 +11,9 @@ services:
       - "8443:443"
     networks:
       - front
-
+    mem_reservation: 128M
+    mem_limit: 512M
+    
   php-fpm:
     build:
       context: ./services/php-fpm
@@ -27,7 +29,7 @@ services:
       - ./services/php-fpm/app-php.ini:/opt/bitnami/php/etc/conf.d/app.ini
     networks:
       - front
-      - back
+      - back    
 
   db:
     image: bitnami/postgresql:16.3.0
@@ -48,6 +50,9 @@ services:
       - db
     ports:
       - "25432:5432"
+    cpus: 2
+    mem_reservation: 512M
+    mem_limit: 2G
 
   db-slave1:
     depends_on:
@@ -70,6 +75,9 @@ services:
       - db
     ports:
       - '25433:5432'
+    cpus: 2
+    mem_reservation: 512M
+    mem_limit: 2G
 
   db-slave2:  
     depends_on:
@@ -92,6 +100,9 @@ services:
       - db
     ports:
       - '25434:5432'
+    cpus: 2
+    mem_reservation: 512M
+    mem_limit: 2G
 
 volumes:
   db-data: ~
