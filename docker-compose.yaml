@@ -41,8 +41,8 @@ services:
       - POSTGRESQL_REPLICATION_MODE=master      
       - POSTGRESQL_REPLICATION_USER=replicator
       - POSTGRESQL_REPLICATION_PASSWORD_FILE=/run/secrets/postgresql-replication-password
-      # - POSTGRESQL_SYNCHRONOUS_REPLICAS_MODE=FIRST
-      # - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
+      - POSTGRESQL_SYNCHRONOUS_REPLICAS_MODE=FIRST
+      - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
     volumes:
       - db-data:/bitnami/postgresql
     networks:
