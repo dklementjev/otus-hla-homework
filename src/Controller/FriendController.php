@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Model\User;
@@ -7,6 +9,7 @@ use App\Utils\Model\UserFriend;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(name:'friend_', path: '/friend')]
@@ -18,7 +21,7 @@ class FriendController
     ) {}
 
     #[Route(name: 'add', path: '/set/{friend_id}', methods: ['PUT'], requirements: ['friend_id' => '\d+'])]
-    public function addAction(Request $request)
+    public function addAction(Request $request): Response
     {
         /** @var User */
         $user = $this->security->getUser();
@@ -36,7 +39,7 @@ class FriendController
     }
 
     #[Route(name: 'delete', path: '/delete/{friend_id}', methods: ['PUT'], requirements: ['friend_id' => '\d+'])]
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): Response
     {
         /** @var User */
         $user = $this->security->getUser();

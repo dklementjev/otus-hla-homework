@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Model\UserFriend;
@@ -40,7 +42,7 @@ SQL;
         DELETE FROM app_user_friends AS uf
             WHERE user_id=:user_id AND friend_id=:friend_id
 SQL;
-        return $this->rwConnection->executeStatement(
+        return (int) $this->rwConnection->executeStatement(
             $sql,
             [
                 'user_id' => $userId,
@@ -56,7 +58,7 @@ SQL;
             VALUES (:user_id, :friend_id)
             ON CONFLICT DO NOTHING
 SQL;
-        return $this->rwConnection->executeStatement(
+        return (int) $this->rwConnection->executeStatement(
             $sql,
             [
                 'user_id' => $userId,
