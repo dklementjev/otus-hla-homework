@@ -5,7 +5,12 @@ namespace App\Repository;
 use App\Model\User;
 use Doctrine\DBAL\Connection;
 
-class UserRepository
+/**
+ * @phpstan-type RawUser array{id: int, first_name: string, last_name: string, birthdate: string, bio: string, city: string, pass: string}
+ *
+ * @template-extends BaseRepository<RawUser, User>
+ */
+class UserRepository extends BaseRepository
 {
     protected readonly Connection $roConnection;
 
@@ -36,13 +41,13 @@ class UserRepository
     public function insert(User $user): ?User
     {
         $sql = <<<'SQL'
-INSERT INTO app_users(first_name, last_name, birthdate, bio, city, pass) 
+INSERT INTO app_users(first_name, last_name, birthdate, bio, city, pass)
 VALUES (:first_name, :last_name, :birthdate, :bio, :city, :password_hash)
 SQL;
 
         $this->rwConnection
             ->executeStatement(
-                $sql, 
+                $sql,
                 [
                     'first_name' => $user->getFirstName(),
                     'last_name' => $user->getLastName(),
@@ -78,15 +83,15 @@ SQL;
         $res = [];
 
         $sql = <<<'SQL'
-        SELECT * FROM app_users AS u WHERE 
-            starts_with(lower(u.first_name), :first_name::text) AND 
+        SELECT * FROM app_users AS u WHERE
+            starts_with(lower(u.first_name), :first_name::text) AND
             starts_with(lower(u.last_name), :last_name::text)
         ORDER BY u.id
 SQL;
         $sth = $this->roConnection->executeQuery(
-            $sql, 
+            $sql,
             [
-                'first_name' => mb_strtolower($firstNamePrefix), 
+                'first_name' => mb_strtolower($firstNamePrefix),
                 'last_name' => mb_strtolower($lastNamePrefix),
             ]
         );
@@ -94,14 +99,15 @@ SQL;
             $res[] = $this->hydrate($row);
         }
 
-        return $res;
+        return array_filter($res);
     }
 
-    /**
-     * @param array{id: int, first_name: string, last_name: string, bio: string, birthdate: string, city: string, pass: string} $rawData
-     */
-    protected function hydrate(array $rawData): User
+    protected function hydrate(bool|array $rawData): ?User
     {
+        if ($this->isEmptyRawData($rawData)) {
+            return null;
+        }
+
         return (new User($rawData['id']))
             ->setFirstName($rawData['first_name'])
             ->setLastName($rawData['last_name'])

@@ -6,7 +6,12 @@ use App\Model\AccessToken;
 use Doctrine\DBAL\Connection;
 use Ramsey\Uuid;
 
-class AccessTokenRepository
+/**
+ * @phpstan-type RawAccessToken array{id: null, user_id: int, token: string}
+ *
+ * @template-extends BaseRepository<RawAccessToken, AccessToken>
+ */
+class AccessTokenRepository extends BaseRepository
 {
     public function __construct(
         protected readonly Connection $dbConnection
@@ -22,7 +27,7 @@ class AccessTokenRepository
     public function getById(int $id): ?AccessToken
     {
         $sql = 'SELECT * FROM app_access_tokens WHERE id=:id';
-        
+
         return $this->hydrate(
             $this->dbConnection->fetchAssociative($sql, ['id'=>$id]) ?: null
         );
@@ -37,29 +42,30 @@ class AccessTokenRepository
         );
     }
 
-    public function insert(AccessToken $accessToken): AccessToken
+    public function insert(AccessToken $accessToken): ?AccessToken
     {
         $sql = 'INSERT INTO app_access_tokens (user_id, token) VALUES (:user_id, :token)';
         $this->dbConnection->executeQuery(
-            $sql, 
+            $sql,
             [
-                'user_id' => $accessToken->getUserId(), 
+                'user_id' => $accessToken->getUserId(),
                 'token' => $accessToken->getRawToken()
             ]
         );
+        /** @var int|null */
         $id = $this->dbConnection->lastInsertId();
 
-        return $this->getById($id);
+        return $id === null ? null : $this->getById($id);
     }
 
-    protected function hydrate(?array $rawData): ?AccessToken
+    protected function hydrate(bool|array $rawData): ?AccessToken
     {
-        if (!$rawData) {
+        if ($this->isEmptyRawData($rawData)) {
             return null;
         }
 
-        return (new AccessToken($rawData['id'] ?? null))
+        return (new AccessToken($rawData['id']))
             ->setUserId($rawData['user_id'])
-            ->setRawToken($rawData['token']) ;        
+            ->setRawToken($rawData['token']) ;
     }
 }
