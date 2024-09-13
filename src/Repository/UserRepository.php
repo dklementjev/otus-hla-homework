@@ -20,9 +20,10 @@ class UserRepository extends BaseRepository
     {
         $sql = 'SELECT * FROM app_users AS u WHERE u.id=:user_id';
 
-        return $this->hydrate(
-            $this->getConnection()->fetchAssociative($sql, ['user_id' => $userId ])
-        );
+        /** @var false|RawUser */
+        $rawData = $this->getConnection()->fetchAssociative($sql, ['user_id' => $userId ]);
+
+        return $this->hydrate($rawData);
     }
 
     public function insert(User $user): ?User
@@ -45,9 +46,10 @@ SQL;
                 ]
             )
         ;
+        /** @var null|int */
         $userId = $this->getConnection(true)->lastInsertId();
 
-        return $userId ? $this->getById((int) $userId) : null;
+        return $userId ? $this->getById($userId) : null;
     }
 
     public function count(): int
@@ -82,7 +84,9 @@ SQL;
                 'last_name' => mb_strtolower($lastNamePrefix),
             ]
         );
+
         while ($row = $sth->fetchAssociative()) {
+            /** @var false|RawUser $row */
             $res[] = $this->hydrate($row);
         }
 

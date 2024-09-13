@@ -23,18 +23,20 @@ class AccessTokenRepository extends BaseRepository
     {
         $sql = 'SELECT * FROM app_access_tokens WHERE id=:id';
 
-        return $this->hydrate(
-            $this->getConnection()->fetchAssociative($sql, ['id'=>$id]) ?: null
-        );
+        /** @var false|RawAccessToken */
+        $rawData = $this->getConnection()->fetchAssociative($sql, ['id'=>$id]);
+
+        return $this->hydrate($rawData);
     }
 
     public function getByRawToken(string $accessToken): ?AccessToken
     {
         $sql = 'SELECT * FROM app_access_tokens WHERE token=:access_token';
 
-        return $this->hydrate(
-            $this->getConnection()->fetchAssociative($sql, ['access_token'=>$accessToken]) ?: null
-        );
+        /** @var false|RawAccessToken */
+        $rawData = $this->getConnection()->fetchAssociative($sql, ['access_token'=>$accessToken]);
+
+        return $this->hydrate($rawData);
     }
 
     public function insert(AccessToken $accessToken): ?AccessToken
