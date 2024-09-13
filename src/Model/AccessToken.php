@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class AccessToken
+class AccessToken implements ModelInterface
 {
     protected int $userId;
 
@@ -14,7 +14,7 @@ class AccessToken
 
     public function getUserId(): int
     {
-        return $this->userId;        
+        return $this->userId;
     }
 
     public function setUserId(int $value): self

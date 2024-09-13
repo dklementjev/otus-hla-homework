@@ -6,7 +6,7 @@ use App\Security\UserRole;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User implements PasswordAuthenticatedUserInterface, UserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface, ModelInterface
 {
     protected string $firstName;
 
