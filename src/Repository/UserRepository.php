@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Model\User;
-use Doctrine\DBAL\Connection;
 
 /**
  * @phpstan-type RawUser array{id: int, first_name: string, last_name: string, birthdate: string, bio: string, city: string, pass: string}
@@ -12,18 +11,6 @@ use Doctrine\DBAL\Connection;
  */
 class UserRepository extends BaseRepository
 {
-    protected readonly Connection $roConnection;
-
-    protected readonly Connection $rwConnection;
-
-    public function __construct(
-        Connection $dbConnection,
-        Connection $slaveConnection
-    ) {
-        $this->rwConnection = $dbConnection;
-        $this->roConnection = $slaveConnection;
-    }
-
     public function create(): User
     {
         return new User(null);
@@ -34,7 +21,7 @@ class UserRepository extends BaseRepository
         $sql = 'SELECT * FROM app_users AS u WHERE u.id=:user_id';
 
         return $this->hydrate(
-            $this->roConnection->fetchAssociative($sql, ['user_id' => $userId ]) ?: null
+            $this->getConnection()->fetchAssociative($sql, ['user_id' => $userId ])
         );
     }
 
@@ -45,7 +32,7 @@ INSERT INTO app_users(first_name, last_name, birthdate, bio, city, pass)
 VALUES (:first_name, :last_name, :birthdate, :bio, :city, :password_hash)
 SQL;
 
-        $this->rwConnection
+        $this->getConnection(true)
             ->executeStatement(
                 $sql,
                 [
@@ -58,7 +45,7 @@ SQL;
                 ]
             )
         ;
-        $userId = $this->rwConnection->lastInsertId();
+        $userId = $this->getConnection(true)->lastInsertId();
 
         return $userId ? $this->getById((int) $userId) : null;
     }
@@ -68,7 +55,7 @@ SQL;
         $sql = <<<'SQL'
 SELECT COUNT(id) FROM app_users
 SQL;
-        $sth = $this->roConnection->executeQuery($sql);
+        $sth = $this->getConnection()->executeQuery($sql);
         /** @var false|array{0: int} */
         $row = $sth->fetchNumeric();
 
@@ -88,7 +75,7 @@ SQL;
             starts_with(lower(u.last_name), :last_name::text)
         ORDER BY u.id
 SQL;
-        $sth = $this->roConnection->executeQuery(
+        $sth = $this->getConnection()->executeQuery(
             $sql,
             [
                 'first_name' => mb_strtolower($firstNamePrefix),

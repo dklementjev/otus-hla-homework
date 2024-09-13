@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Model\AccessToken;
-use Doctrine\DBAL\Connection;
 use Ramsey\Uuid;
 
 /**
@@ -13,10 +12,6 @@ use Ramsey\Uuid;
  */
 class AccessTokenRepository extends BaseRepository
 {
-    public function __construct(
-        protected readonly Connection $dbConnection
-    ) {}
-
     public function create(): AccessToken
     {
         return (new AccessToken())
@@ -29,7 +24,7 @@ class AccessTokenRepository extends BaseRepository
         $sql = 'SELECT * FROM app_access_tokens WHERE id=:id';
 
         return $this->hydrate(
-            $this->dbConnection->fetchAssociative($sql, ['id'=>$id]) ?: null
+            $this->getConnection()->fetchAssociative($sql, ['id'=>$id]) ?: null
         );
     }
 
@@ -38,14 +33,14 @@ class AccessTokenRepository extends BaseRepository
         $sql = 'SELECT * FROM app_access_tokens WHERE token=:access_token';
 
         return $this->hydrate(
-            $this->dbConnection->fetchAssociative($sql, ['access_token'=>$accessToken]) ?: null
+            $this->getConnection()->fetchAssociative($sql, ['access_token'=>$accessToken]) ?: null
         );
     }
 
     public function insert(AccessToken $accessToken): ?AccessToken
     {
         $sql = 'INSERT INTO app_access_tokens (user_id, token) VALUES (:user_id, :token)';
-        $this->dbConnection->executeQuery(
+        $this->getConnection(true)->executeQuery(
             $sql,
             [
                 'user_id' => $accessToken->getUserId(),
@@ -53,7 +48,7 @@ class AccessTokenRepository extends BaseRepository
             ]
         );
         /** @var int|null */
-        $id = $this->dbConnection->lastInsertId();
+        $id = $this->getConnection(true)->lastInsertId();
 
         return $id === null ? null : $this->getById($id);
     }
@@ -66,6 +61,6 @@ class AccessTokenRepository extends BaseRepository
 
         return (new AccessToken($rawData['id']))
             ->setUserId($rawData['user_id'])
-            ->setRawToken($rawData['token']) ;
+            ->setRawToken($rawData['token']);
     }
 }
