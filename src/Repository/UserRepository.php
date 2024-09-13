@@ -3,22 +3,14 @@
 namespace App\Repository;
 
 use App\Model\User;
-use Doctrine\DBAL\Connection;
 
-class UserRepository
+/**
+ * @phpstan-type RawUser array{id: int, first_name: string, last_name: string, birthdate: string, bio: string, city: string, pass: string}
+ *
+ * @template-extends BaseRepository<RawUser, User>
+ */
+class UserRepository extends BaseRepository
 {
-    protected readonly Connection $roConnection;
-
-    protected readonly Connection $rwConnection;
-
-    public function __construct(
-        Connection $dbConnection,
-        Connection $slaveConnection
-    ) {
-        $this->rwConnection = $dbConnection;
-        $this->roConnection = $slaveConnection;
-    }
-
     public function create(): User
     {
         return new User(null);
@@ -28,21 +20,22 @@ class UserRepository
     {
         $sql = 'SELECT * FROM app_users AS u WHERE u.id=:user_id';
 
-        return $this->hydrate(
-            $this->roConnection->fetchAssociative($sql, ['user_id' => $userId ]) ?: null
-        );
+        /** @var false|RawUser */
+        $rawData = $this->getConnection()->fetchAssociative($sql, ['user_id' => $userId ]);
+
+        return $this->hydrate($rawData);
     }
 
     public function insert(User $user): ?User
     {
         $sql = <<<'SQL'
-INSERT INTO app_users(first_name, last_name, birthdate, bio, city, pass) 
+INSERT INTO app_users(first_name, last_name, birthdate, bio, city, pass)
 VALUES (:first_name, :last_name, :birthdate, :bio, :city, :password_hash)
 SQL;
 
-        $this->rwConnection
+        $this->getConnection(true)
             ->executeStatement(
-                $sql, 
+                $sql,
                 [
                     'first_name' => $user->getFirstName(),
                     'last_name' => $user->getLastName(),
@@ -53,9 +46,10 @@ SQL;
                 ]
             )
         ;
-        $userId = $this->rwConnection->lastInsertId();
+        /** @var null|int */
+        $userId = $this->getConnection(true)->lastInsertId();
 
-        return $userId ? $this->getById((int) $userId) : null;
+        return $userId ? $this->getById($userId) : null;
     }
 
     public function count(): int
@@ -63,7 +57,7 @@ SQL;
         $sql = <<<'SQL'
 SELECT COUNT(id) FROM app_users
 SQL;
-        $sth = $this->roConnection->executeQuery($sql);
+        $sth = $this->getConnection()->executeQuery($sql);
         /** @var false|array{0: int} */
         $row = $sth->fetchNumeric();
 
@@ -78,30 +72,33 @@ SQL;
         $res = [];
 
         $sql = <<<'SQL'
-        SELECT * FROM app_users AS u WHERE 
-            starts_with(lower(u.first_name), :first_name::text) AND 
+        SELECT * FROM app_users AS u WHERE
+            starts_with(lower(u.first_name), :first_name::text) AND
             starts_with(lower(u.last_name), :last_name::text)
         ORDER BY u.id
 SQL;
-        $sth = $this->roConnection->executeQuery(
-            $sql, 
+        $sth = $this->getConnection()->executeQuery(
+            $sql,
             [
-                'first_name' => mb_strtolower($firstNamePrefix), 
+                'first_name' => mb_strtolower($firstNamePrefix),
                 'last_name' => mb_strtolower($lastNamePrefix),
             ]
         );
+
         while ($row = $sth->fetchAssociative()) {
+            /** @var false|RawUser $row */
             $res[] = $this->hydrate($row);
         }
 
-        return $res;
+        return array_filter($res);
     }
 
-    /**
-     * @param array{id: int, first_name: string, last_name: string, bio: string, birthdate: string, city: string, pass: string} $rawData
-     */
-    protected function hydrate(array $rawData): User
+    protected function hydrate(bool|array $rawData): ?User
     {
+        if ($this->isEmptyRawData($rawData)) {
+            return null;
+        }
+
         return (new User($rawData['id']))
             ->setFirstName($rawData['first_name'])
             ->setLastName($rawData['last_name'])
