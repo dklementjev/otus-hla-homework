@@ -1,0 +1,6 @@
+db-replication/docker-top/*
+*.odt
+*.http
+*.json
+*.jsonl
+.~*

@@ -1,8 +1,17 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
-        profiling_collect_backtrace: '%kernel.debug%'
-        use_savepoints: true
+        
+        default_connection: default
+
+        connections:
+            default:
+                profiling_collect_backtrace: '%kernel.debug%'
+                use_savepoints: true
+                url: '%env(resolve:DATABASE_URL_DEFAULT)%'
+            slave:
+                profiling_collect_backtrace: '%kernel.debug%'
+                use_savepoints: true
+                url: '%env(resolve:DATABASE_URL_SLAVE)%'
     
 when@test:
     doctrine:
