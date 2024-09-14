@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO;
+use App\Model\User;
 use App\Utils\Model\Post;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -29,6 +29,7 @@ class PostController
     ): Response {
         /** @var User */
         $user = $this->security->getUser();
+        /** @var int */
         $userId = $user->getId();
 
         $post = $this->postUtils->createFromDto($userId, $requestDto);
