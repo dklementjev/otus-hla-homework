@@ -9,20 +9,13 @@ use Doctrine\DBAL\Connection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
-class PostRepository
+/**
+ * @phpstan-type RawPost array{id: int, user_id: int, uuid: string, text: string}
+ *
+ * @template-extends BaseRepository<RawPost, Post>
+ */
+class PostRepository extends BaseRepository
 {
-    protected Connection $roConnection;
-
-    protected Connection $rwConnection;
-
-    public function __construct(
-        Connection $dbConnection,
-        Connection $slaveConnection
-    ) {
-        $this->rwConnection = $dbConnection;
-        $this->roConnection = $slaveConnection;
-    }
-
     public function create(int $userId): Post
     {
         return new Post(null, $userId, Uuid::uuid7());
@@ -45,19 +38,16 @@ class PostRepository
         SELECT COUNT(*) AS count FROM app_posts WHERE "uuid"=:uuid
 SQL;
 
-$count = (int) $this->roConnection->fetchOne($sql, ['uuid'=>(string) $uuid]);
-
-        return $count;
+        return (int) $this->getConnection()->fetchOne($sql, ['uuid'=>(string) $uuid]);
     }
 
     public function getByUUID(UuidInterface $uuid, bool $useMaster = false): ?Post
     {
-        $connection = $useMaster ? $this->rwConnection : $this->roConnection;
-
         $sql = <<<'SQL'
         SELECT * FROM app_posts WHERE "uuid"=:uuid
 SQL;
-        $rawPost = $connection->fetchAssociative(
+        /** @var false|RawPost */
+        $rawPost = $this->getConnection($useMaster)->fetchAssociative(
             $sql,
             [
                 'uuid' => (string) $uuid,
@@ -67,12 +57,12 @@ SQL;
         return $this->hydrate($rawPost);
     }
 
-    public function insert(Post $model): Post
+    public function insert(Post $model): ?Post
     {
         $sql = <<<'SQL'
         INSERT INTO app_posts ("uuid", "user_id", "text") VALUES (:uuid, :user_id, :text)
 SQL;
-        $this->rwConnection->executeQuery(
+        $this->getConnection(true)->executeQuery(
             $sql,
             [
                 'uuid' => (string) $model->getUUID(),
@@ -84,12 +74,12 @@ SQL;
         return $this->getByUUID($model->getUUID(), true);
     }
 
-    public function update(Post $model): Post
+    public function update(Post $model): ?Post
     {
         $sql = <<<'SQL'
         UPDATE app_posts SET "text"=:text WHERE "uuid"=:uuid
 SQL;
-        $this->rwConnection->executeQuery(
+        $this->getConnection(true)->executeQuery(
             $sql,
             [
                 'uuid' => (string) $model->getUUID(),
@@ -105,7 +95,7 @@ SQL;
         $sql = <<<'SQL'
         DELETE FROM app_posts WHERE "uuid"=:uuid
 SQL;
-        $rowCount = $this->rwConnection->executeStatement(
+        $rowCount = $this->getConnection(true)->executeStatement(
             $sql,
             [
                 'uuid' => (string) $model->getUUID(),
@@ -115,9 +105,9 @@ SQL;
         return ($rowCount > 0);
     }
 
-    protected function hydrate(array|false $rawData): ?Post
+    protected function hydrate(array|bool $rawData): ?Post
     {
-        if ($rawData === false) {
+        if ($this->isEmptyRawData($rawData)) {
             return null;
         }
 

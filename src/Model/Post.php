@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Ramsey\Uuid\UuidInterface;
 
-class Post
+class Post implements ModelInterface
 {
     public function __construct(
         protected readonly ?int $id,
