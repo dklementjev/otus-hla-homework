@@ -7,20 +7,13 @@ namespace App\Repository;
 use App\Model\UserFriend;
 use Doctrine\DBAL\Connection;
 
-class UserFriendRepository
+/**
+ * @phpstan-type RawUserFriend array{user_id: int, friend_id: int}
+ *
+ * @template-extends BaseRepository<RawUserFriend, UserFriend>
+ */
+class UserFriendRepository extends BaseRepository
 {
-    protected Connection $rwConnection;
-
-    protected Connection $roConnection;
-
-    public function __construct(
-        Connection $dbConnection,
-        Connection $slaveConnection
-    ) {
-        $this->rwConnection = $dbConnection;
-        $this->roConnection = $slaveConnection;
-    }
-
     public function getByUserIdAndFriendId(int $userId, int $friedndId): ?UserFriend
     {
         $sql = <<<'SQL'
@@ -28,12 +21,13 @@ class UserFriendRepository
             FROM app_user_friends AS uf
             WHERE user_id=:user_id AND friend_id=:friend_id
 SQL;
-        return $this->hydrate(
-            $this->roConnection->fetchAssociative(
-                $sql,
-                ['user_id' => $userId, 'friend_id' => $friedndId]
-            )
+        /** @var false|RawUserFriend */
+        $rawData = $this->getConnection()->fetchAssociative(
+            $sql,
+            ['user_id' => $userId, 'friend_id' => $friedndId]
         );
+
+        return $this->hydrate($rawData);
     }
 
     public function deleteByUserIdAndFriendId(int $userId, int $friedndId): int
@@ -42,7 +36,7 @@ SQL;
         DELETE FROM app_user_friends AS uf
             WHERE user_id=:user_id AND friend_id=:friend_id
 SQL;
-        return (int) $this->rwConnection->executeStatement(
+        return (int) $this->getConnection(true)->executeStatement(
             $sql,
             [
                 'user_id' => $userId,
@@ -58,7 +52,7 @@ SQL;
             VALUES (:user_id, :friend_id)
             ON CONFLICT DO NOTHING
 SQL;
-        return (int) $this->rwConnection->executeStatement(
+        return (int) $this->getConnection(true)->executeStatement(
             $sql,
             [
                 'user_id' => $userId,

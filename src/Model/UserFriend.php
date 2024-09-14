@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class UserFriend
+class UserFriend implements ModelInterface
 {
     public function __construct(
         protected readonly int $userId,
