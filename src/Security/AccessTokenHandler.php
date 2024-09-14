@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Repository\AccessTokenRepository;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -23,7 +24,7 @@ class AccessTokenHandler implements AccessTokenHandlerInterface
         if (is_null($accessToken)) {
             throw new BadCredentialsException('Invalid credentials.');
         }
-        
-        return new UserBadge($accessToken->getUserId());
+
+        return new UserBadge((string) $accessToken->getUserId());
     }
 }
