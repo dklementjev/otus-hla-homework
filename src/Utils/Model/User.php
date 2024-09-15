@@ -17,13 +17,13 @@ class User
     public function register(
         DTO\User\RegisterRequest $dto
     ): ?Model\User {
-        
+
         $res = $this->userRepository->create();
         $res->setFirstName($dto->first_name)
             ->setLastName($dto->second_name)
             ->setBirthdate(new \DateTimeImmutable($dto->birthdate, new \DateTimeZone("UTC")))
             ->setBio($dto->biography)
-            ->setCity($dto->city)            
+            ->setCity($dto->city)
             ->setPasswordHash($this->passwordHasher->hashPassword($res, $dto->password))
         ;
         return $this->userRepository->insert($res);
@@ -45,5 +45,13 @@ class User
     public function findByNamePrefix(string $firstNamePrefix, string $lastNamePrefix): array
     {
         return $this->userRepository->findByNamePrefix($firstNamePrefix, $lastNamePrefix);
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function pickRandomUserIds(int $count): array
+    {
+        return $this->userRepository->pickRandomUserIds($count);
     }
 }

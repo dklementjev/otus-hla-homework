@@ -93,6 +93,37 @@ SQL;
         return array_filter($res);
     }
 
+    /**
+     * @return list<int>
+     */
+    public function pickRandomUserIds(int $count): array
+    {
+        $rowCount = $this->getRowCount();
+        $percent = ceil(max(0.01, $count/$rowCount*100));
+        $sql = <<<'SQL'
+        SELECT id FROM app_users TABLESAMPLE BERNOULLI(:percent) LIMIT :max_items
+SQL;
+        /** @var int[] */
+        $ids = $this->getConnection()->fetchFirstColumn(
+            $sql,
+            [
+                'percent' => $percent,
+                'max_items' => $count
+            ]
+        );
+
+        return $ids;
+    }
+
+    protected function getRowCount(): int
+    {
+        $sql = <<<'SQL'
+        SELECT COUNT(*) FROM app_users
+SQL;
+
+        return (int) $this->getConnection()->fetchOne($sql);
+    }
+
     protected function hydrate(bool|array $rawData): ?User
     {
         if ($this->isEmptyRawData($rawData)) {
