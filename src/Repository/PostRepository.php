@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Post;
-use Doctrine\DBAL\Connection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -57,7 +56,7 @@ SQL;
         return $this->hydrate($rawPost);
     }
 
-    public function insert(Post $model): ?Post
+    public function insert(Post $model): Post
     {
         $sql = <<<'SQL'
         INSERT INTO app_posts ("uuid", "user_id", "text") VALUES (:uuid, :user_id, :text)
@@ -71,7 +70,10 @@ SQL;
             ]
             );
 
-        return $this->getByUUID($model->getUUID(), true);
+        $post = $this->getByUUID($model->getUUID(), true);
+        assert($post !== null);
+
+        return $post;
     }
 
     public function update(Post $model): ?Post
