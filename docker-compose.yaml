@@ -104,6 +104,19 @@ services:
     mem_reservation: 512M
     mem_limit: 2G
 
+  redis-cache:
+    image: bitnami/redis:6.2
+    environment:
+      - REDIS_AOF_ENABLED=no
+      - REDIS_PASSWORD_FILE=/run/secrets/redis-password
+    secrets:
+      - redis-password
+    networks:
+      - back
+    cpus: 1
+    mem_reservation: 128M
+    mem_limit: 128M
+
 volumes:
   db-data: ~
   db-data-slave1: ~
@@ -119,3 +132,5 @@ secrets:
     file: ./services/postgresql/password.txt
   postgresql-replication-password:
     file: ./services/postgresql/replication-password.txt
+  redis-password:
+    file: ./services/redis/password.txt
