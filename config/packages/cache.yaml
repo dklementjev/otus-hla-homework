@@ -15,5 +15,14 @@ framework:
         #app: cache.adapter.apcu
 
         # Namespaced pools use the above "app" backend by default
-        #pools:
-            #my.dedicated.cache: null
+        pools:
+            cache.feed:
+                adapter: cache.adapter.redis
+                provider: cache.adapter.redis.cache_feed
+
+services:
+    cache.adapter.redis.cache_feed:
+        class: Symfony\Component\Cache\Adapter\RedisAdapter
+        factory: [null, 'createConnection']
+        arguments:
+            - '%env(CACHE_FEED_DSN)%'
