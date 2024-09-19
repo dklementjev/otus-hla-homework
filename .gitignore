@@ -1,3 +1,4 @@
+.composer
 .phive
 *.code-workspace
 ###> symfony/framework-bundle ###
