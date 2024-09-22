@@ -16,12 +16,12 @@ framework:
 
         # Namespaced pools use the above "app" backend by default
         pools:
-            cache.feed:
+            cache.app.post.feed:
                 adapter: cache.adapter.redis
-                provider: cache.adapter.redis.cache_feed
+                provider: cache.provider.redis.cache_feed
 
 services:
-    cache.adapter.redis.cache_feed:
+    cache.provider.redis.cache_feed:
         class: Symfony\Component\Cache\Adapter\RedisAdapter
         factory: [null, 'createConnection']
         arguments:
