@@ -107,6 +107,23 @@ SQL;
         return ($rowCount > 0);
     }
 
+    /**
+     * @param positive-int $limit
+     *
+     * @return Post[]
+     */
+    public function findFeedPostsForUser(int $userId, int $limit = 1000): array
+    {
+        $sql = <<<'SQL'
+        SELECT * FROM app_posts WHERE user_id IN (
+            SELECT friend_id FROM app_user_friends WHERE user_id=:user_id
+        )
+        ORDER BY id DESC LIMIT :limit
+SQL;
+
+        return $this->hydrateAll($this->getConnection()->fetchAllAssociative($sql, ['user_id' => $userId, 'limit' => $limit]));
+    }
+
     protected function hydrate(array|bool $rawData): ?Post
     {
         if ($this->isEmptyRawData($rawData)) {

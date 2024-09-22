@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     password_hashers:
-        App\Model\User: 
+        App\Model\User:
             algorithm: auto
             cost: 13
 
@@ -27,7 +27,7 @@ services:
 
     App\Controller\:
         resource: '../src/Controller/'
-        tags: 
+        tags:
             - 'controller.service_arguments'
 
     # add more service definitions when explicit configuration is needed
@@ -40,3 +40,8 @@ services:
 
     Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface:
         class: Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher
+
+    App\Utils\Model\Post:
+        arguments:
+            $feedCache: "@cache.app.post.feed"
+            $feedCacheLifetime: 60

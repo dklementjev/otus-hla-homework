@@ -87,4 +87,19 @@ class PostController
             'success' => true,
         ]);
     }
+
+    #[Route(name: 'feed', path: '/feed', methods: ['GET'])]
+    public function feedAction(): Response
+    {
+        /** @var User */
+        $user = $this->security->getUser();
+        /** @var int */
+        $userId = $user->getId();
+
+        $posts = $this->postUtils->getFeed($userId);
+
+        return new JsonResponse(
+            $posts
+        );
+    }
 }
