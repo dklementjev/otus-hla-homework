@@ -108,13 +108,28 @@ services:
     image: bitnami/redis:6.2
     environment:
       - REDIS_AOF_ENABLED=no
-      - REDIS_PASSWORD_FILE=/run/secrets/redis-password
+      - REDIS_PASSWORD_FILE=/run/secrets/redis-cache-password
     secrets:
-      - redis-password
+      - redis-cache-password
     networks:
       - back
     ports:
       - '26379:6379'
+    cpus: 1
+    mem_reservation: 128M
+    mem_limit: 128M
+
+  redis-queue:
+    image: bitnami/redis:6.2
+    environment:
+      - REDIS_AOF_ENABLED=no
+      - REDIS_PASSWORD_FILE=/run/secrets/redis-queue-password
+    secrets:
+      - redis-queue-password
+    networks:
+      - back
+    ports:
+      - '26380:6379'
     cpus: 1
     mem_reservation: 128M
     mem_limit: 128M
@@ -134,5 +149,7 @@ secrets:
     file: ./services/postgresql/password.txt
   postgresql-replication-password:
     file: ./services/postgresql/replication-password.txt
-  redis-password:
-    file: ./services/redis/password.txt
+  redis-cache-password:
+    file: ./services/redis/cache-password.txt
+  redis-queue-password:
+    file: ./services/redis/queue-password.txt
