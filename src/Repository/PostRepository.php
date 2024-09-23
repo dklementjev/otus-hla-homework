@@ -59,7 +59,7 @@ SQL;
     public function insert(Post $model): Post
     {
         $sql = <<<'SQL'
-        INSERT INTO app_posts ("uuid", "user_id", "text") VALUES (:uuid, :user_id, :text)
+        INSERT INTO app_posts ("uuid", "user_id", "text", "created_at") VALUES (:uuid, :user_id, :text, :created_at)
 SQL;
         $this->getConnection(true)->executeQuery(
             $sql,
@@ -67,6 +67,7 @@ SQL;
                 'uuid' => (string) $model->getUUID(),
                 'user_id' => $model->getUserId(),
                 'text' => $model->getText(),
+                'created_at' => (new \DateTimeImmutable("now", new \DateTimeZone("UTC")))->format("c"),
             ]
             );
 
