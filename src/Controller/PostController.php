@@ -33,7 +33,7 @@ class PostController
         $userId = $user->getId();
 
         $post = $this->postUtils->createFromDto($userId, $requestDto);
-        $this->postUtils->update($post);
+        $this->postUtils->insert($post);
 
         return new JsonResponse(
             DTO\Post\Post::createFromModel($post)

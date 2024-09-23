@@ -37,12 +37,17 @@ class Post
 
     public function update(ModelPost $post): ModelPost
     {
-        return $this->postRepository->upsert($post);
+        return $this->postRepository->update($post);
     }
 
     public function insert(ModelPost $post): ModelPost
     {
         return $this->postRepository->insert($post);
+    }
+
+    public function upsert(ModelPost $post): ModelPost
+    {
+        return $this->postRepository->upsert($post);
     }
 
     public function delete(ModelPost $post): bool
