@@ -38,7 +38,7 @@ class Post
             ->setText($text)
         ;
 
-        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Create);
+        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Create->value);
 
         return $res;
     }
@@ -47,7 +47,7 @@ class Post
     {
         $res = $this->postRepository->update($post);
 
-        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Update);
+        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Update->value);
 
         return $res;
     }
@@ -56,14 +56,14 @@ class Post
     {
         $res = $this->postRepository->insert($post);
 
-        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Insert);
+        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Insert->value);
 
         return $res;
     }
 
     public function delete(Model\Post $post): bool
     {
-        $this->eventDispatcher->dispatch(new Event\Post($post), EventType\Post::Delete);
+        $this->eventDispatcher->dispatch(new Event\Post($post), EventType\Post::Delete->value);
 
         return $this->postRepository->delete($post);
     }
