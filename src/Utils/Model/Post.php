@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Utils\Model;
 
 use App\DTO;
-use App\Model\Post as ModelPost;
+use App\EventDispatcher\Event;
+use App\EventDispatcher\EventType;
+use App\Model;
 use App\Repository\PostRepository;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -16,10 +19,11 @@ class Post
     public function __construct(
         protected readonly PostRepository $postRepository,
         protected readonly CacheInterface $feedCache,
-        protected readonly int $feedCacheLifetime
+        protected readonly int $feedCacheLifetime,
+        protected readonly EventDispatcherInterface $eventDispatcher,
     ) {}
 
-    public function createFromDTO(int $userId, DTO\Post\CreatePost $dto): ModelPost
+    public function createFromDTO(int $userId, DTO\Post\CreatePost $dto): Model\Post
     {
         return $this->create(
             $userId,
@@ -27,31 +31,40 @@ class Post
         );
     }
 
-    public function create(int $userId, ?string $text = null): ModelPost
+    public function create(int $userId, ?string $text = null): Model\Post
     {
-        return $this->postRepository
+        $res = $this->postRepository
             ->create($userId)
             ->setText($text)
         ;
+
+        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Create);
+
+        return $res;
     }
 
-    public function update(ModelPost $post): ModelPost
+    public function update(Model\Post $post): Model\Post
     {
-        return $this->postRepository->update($post);
+        $res = $this->postRepository->update($post);
+
+        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Update);
+
+        return $res;
     }
 
-    public function insert(ModelPost $post): ModelPost
+    public function insert(Model\Post $post): Model\Post
     {
-        return $this->postRepository->insert($post);
+        $res = $this->postRepository->insert($post);
+
+        $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Insert);
+
+        return $res;
     }
 
-    public function upsert(ModelPost $post): ModelPost
+    public function delete(Model\Post $post): bool
     {
-        return $this->postRepository->upsert($post);
-    }
+        $this->eventDispatcher->dispatch(new Event\Post($post), EventType\Post::Delete);
 
-    public function delete(ModelPost $post): bool
-    {
         return $this->postRepository->delete($post);
     }
 
@@ -67,7 +80,7 @@ class Post
                 //TODO: lock ?
                 $posts = $postRepository->findFeedPostsForUser($userId);
                 $postDTOs = array_map(
-                    static fn (ModelPost $post) => DTO\Post\Post::createFromModel($post),
+                    static fn (Model\Post $post) => DTO\Post\Post::createFromModel($post),
                     $posts
                 );
                 $item->expiresAfter($cacheLifetime);
@@ -77,7 +90,7 @@ class Post
         );
     }
 
-    public function getByUUID(UuidInterface $uuid): ?ModelPost
+    public function getByUUID(UuidInterface $uuid): ?Model\Post
     {
         return $this->postRepository->getByUUID($uuid);
     }
