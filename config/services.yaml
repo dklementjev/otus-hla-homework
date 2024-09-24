@@ -22,6 +22,9 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
+            - '../src/EventDispatcher/Event/'
+            - '../src/EventDispatcher/EventType/'
+            - '../src/Messenger/Message/'
             - '../src/Model/'
             - '../src/Kernel.php'
 
