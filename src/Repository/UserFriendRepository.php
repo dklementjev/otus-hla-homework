@@ -61,6 +61,42 @@ SQL;
         );
     }
 
+    /**
+     * @return int[]
+     */
+    public function findFriendIdsByUserId(int $userId): array
+    {
+        $sql = <<<SQL
+        SELECT uf.friend_id FROM app_user_friends AS uf WHERE uf.user_id=:user_id
+SQL;
+        $sth = $this->getConnection()->executeQuery(
+            $sql,
+            [
+                'user_id' => $userId,
+            ]
+        );
+
+        return $sth->fetchFirstColumn();
+    }
+
+    /**
+     * @return int[]
+     */
+    public function findUserIdsByFriendId(int $userId): array
+    {
+        $sql = <<<SQL
+        SELECT uf.user_id FROM app_user_friends AS uf WHERE uf.friend_id=:friend_id
+SQL;
+        $sth = $this->getConnection()->executeQuery(
+            $sql,
+            [
+                'friend_id' => $userId,
+            ]
+        );
+
+        return $sth->fetchFirstColumn();
+    }
+
     protected function hydrate(array|bool $rawData): ?UserFriend
     {
         if ($rawData === false) {

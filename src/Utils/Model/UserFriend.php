@@ -25,4 +25,20 @@ class UserFriend
     {
         return $this->userFriendRepository->addFriendId($userId, $friendId);
     }
+
+    /**
+     * @return int[]
+     */
+    public function findFriendIdsByUserId(int $userId): array
+    {
+        return $this->userFriendRepository->findFriendIdsByUserId($userId);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function findUserIdsByFriendId(int $userId): array
+    {
+        return $this->userFriendRepository->findUserIdsByFriendId($userId);
+    }
 }

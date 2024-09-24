@@ -90,6 +90,12 @@ class Post
         );
     }
 
+    public function invalidateFeed(int $userId): void
+    {
+        $cacheKey = $this->generateCacheKey(['feed', (string) $userId]);
+        $this->feedCache->delete($cacheKey);
+    }
+
     public function getByUUID(UuidInterface $uuid): ?Model\Post
     {
         return $this->postRepository->getByUUID($uuid);

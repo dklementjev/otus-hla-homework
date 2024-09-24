@@ -10,8 +10,8 @@ framework:
             sync: 'sync://'
 
         routing:
-            # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            App\Messenger\Handler\FriendFeedsUpdate: async
+            App\Messenger\Message\FeedCacheInvalidate: async
 
 # when@test:
 #    framework:
