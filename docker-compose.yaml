@@ -22,11 +22,30 @@ services:
       - PHP_FPM_LISTEN_ADDRESS=9000
       - PHP_DATE_TIMEZONE=UTC
       - PHP_ENABLE_OPCACHE=true
-      - PHP_MEMORY_LIMIT=256M
     volumes:
-      #- ./services/php-fpm/app.conf:/opt/bitnami/php/etc/php-fpm.conf
       - ./:/app
       - ./services/php-fpm/app-php.ini:/opt/bitnami/php/etc/conf.d/app.ini
+    networks:
+      - front
+      - back
+
+  messenger-worker:
+    build:
+      context: ./services/php-fpm
+      dockerfile: php-fpm.Dockerfile
+    working_dir:
+      /app
+    entrypoint:
+      - bin/console
+      - messenger:consume
+      - async
+      - -vv
+    environment:
+      - PHP_DATE_TIMEZONE=UTC
+      - PHP_ENABLE_OPCACHE=true
+    volumes:
+      - ./:/app
+      - ./services/php-fpm/cli.ini:/opt/bitnami/php/etc/conf.d/php.ini
     networks:
       - front
       - back
