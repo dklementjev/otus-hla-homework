@@ -9,19 +9,26 @@ use App\Model\User;
 use App\Utils\Model\Post;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route(name: 'post_', path: '/post')]
-class PostController
+class PostController extends BaseController
 {
     public function __construct(
         protected readonly Security $security,
-        protected readonly Post $postUtils
-    ) {}
+        protected readonly Post $postUtils,
+        SerializerInterface $serializer,
+        #[Autowire(param: 'controller.default_json_encode_options')]
+        int $jsonEncodeOptions
+    ) {
+        parent::__construct($serializer, $jsonEncodeOptions);
+    }
 
     #[Route(name: 'create', path: '/create', methods: ['POST'])]
     public function createAction(
@@ -36,7 +43,8 @@ class PostController
         $this->postUtils->insert($post);
 
         return new JsonResponse(
-            DTO\Post\Post::createFromModel($post)
+            $this->jsonSerialize($post, 'default_view'),
+            json: true
         );
     }
 
@@ -51,7 +59,8 @@ class PostController
         }
 
         return new JsonResponse(
-            DTO\Post\Post::createFromModel($post)
+            $this->jsonSerialize($post, 'default_view'),
+            json: true
         );
     }
 
@@ -67,7 +76,8 @@ class PostController
         $post = $this->postUtils->update($post);
 
         return new JsonResponse(
-            DTO\Post\Post::createFromModel($post)
+            $this->jsonSerialize($post, 'default_view'),
+            json: true
         );
     }
 
@@ -99,7 +109,8 @@ class PostController
         $posts = $this->postUtils->getFeed($userId);
 
         return new JsonResponse(
-            $posts
+            $this->jsonSerialize($posts, 'default_view'),
+            json: true
         );
     }
 }

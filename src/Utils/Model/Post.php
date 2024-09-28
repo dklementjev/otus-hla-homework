@@ -79,13 +79,9 @@ class Post
             function (ItemInterface $item) use ($cacheLifetime, $postRepository, $userId)  {
                 //TODO: lock ?
                 $posts = $postRepository->findFeedPostsForUser($userId);
-                $postDTOs = array_map(
-                    static fn (Model\Post $post) => DTO\Post\Post::createFromModel($post),
-                    $posts
-                );
                 $item->expiresAfter($cacheLifetime);
 
-                return $postDTOs;
+                return $posts;
             }
         );
     }
