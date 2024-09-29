@@ -1,5 +1,7 @@
+.composer
 .phive
 *.code-workspace
+.idea
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php

@@ -5,7 +5,7 @@ namespace App\DTO\Post;
 use App\Model\Post as ModelPost;
 use Ramsey\Uuid\UuidInterface;
 
-class Post
+final class Post
 {
     public function __construct(
         public readonly UuidInterface $id,

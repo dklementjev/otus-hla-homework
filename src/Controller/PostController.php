@@ -33,7 +33,7 @@ class PostController
         $userId = $user->getId();
 
         $post = $this->postUtils->createFromDto($userId, $requestDto);
-        $this->postUtils->update($post);
+        $this->postUtils->insert($post);
 
         return new JsonResponse(
             DTO\Post\Post::createFromModel($post)
@@ -86,5 +86,20 @@ class PostController
         return new JsonResponse([
             'success' => true,
         ]);
+    }
+
+    #[Route(name: 'feed', path: '/feed', methods: ['GET'])]
+    public function feedAction(): Response
+    {
+        /** @var User */
+        $user = $this->security->getUser();
+        /** @var int */
+        $userId = $user->getId();
+
+        $posts = $this->postUtils->getFeed($userId);
+
+        return new JsonResponse(
+            $posts
+        );
     }
 }

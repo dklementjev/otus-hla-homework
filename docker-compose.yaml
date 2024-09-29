@@ -22,11 +22,30 @@ services:
       - PHP_FPM_LISTEN_ADDRESS=9000
       - PHP_DATE_TIMEZONE=UTC
       - PHP_ENABLE_OPCACHE=true
-      - PHP_MEMORY_LIMIT=256M
     volumes:
-      #- ./services/php-fpm/app.conf:/opt/bitnami/php/etc/php-fpm.conf
       - ./:/app
       - ./services/php-fpm/app-php.ini:/opt/bitnami/php/etc/conf.d/app.ini
+    networks:
+      - front
+      - back
+
+  messenger-worker:
+    build:
+      context: ./services/php-fpm
+      dockerfile: php-fpm.Dockerfile
+    working_dir:
+      /app
+    entrypoint:
+      - bin/console
+      - messenger:consume
+      - async
+      - -vv
+    environment:
+      - PHP_DATE_TIMEZONE=UTC
+      - PHP_ENABLE_OPCACHE=true
+    volumes:
+      - ./:/app
+      - ./services/php-fpm/cli.ini:/opt/bitnami/php/etc/conf.d/php.ini
     networks:
       - front
       - back
@@ -104,6 +123,36 @@ services:
     mem_reservation: 512M
     mem_limit: 2G
 
+  redis-cache:
+    image: bitnami/redis:6.2
+    environment:
+      - REDIS_AOF_ENABLED=no
+      - REDIS_PASSWORD_FILE=/run/secrets/redis-cache-password
+    secrets:
+      - redis-cache-password
+    networks:
+      - back
+    ports:
+      - '26379:6379'
+    cpus: 1
+    mem_reservation: 128M
+    mem_limit: 128M
+
+  redis-queue:
+    image: bitnami/redis:6.2
+    environment:
+      - REDIS_AOF_ENABLED=no
+      - REDIS_PASSWORD_FILE=/run/secrets/redis-queue-password
+    secrets:
+      - redis-queue-password
+    networks:
+      - back
+    ports:
+      - '26380:6379'
+    cpus: 1
+    mem_reservation: 128M
+    mem_limit: 128M
+
 volumes:
   db-data: ~
   db-data-slave1: ~
@@ -119,3 +168,7 @@ secrets:
     file: ./services/postgresql/password.txt
   postgresql-replication-password:
     file: ./services/postgresql/replication-password.txt
+  redis-cache-password:
+    file: ./services/redis/cache-password.txt
+  redis-queue-password:
+    file: ./services/redis/queue-password.txt

@@ -30,6 +30,16 @@ abstract class BaseRepository
      */
     abstract protected function hydrate(bool|array $rawData): ?ModelInterface;
 
+    protected function hydrateAll(array $rawDataArray): array
+    {
+        return array_filter(
+            array_map(
+                fn($rawData) => $this->hydrate($rawData),
+                $rawDataArray
+            )
+        );
+    }
+
     /**
      * @param false|RawType $rawData
      *

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\Post;
-use Doctrine\DBAL\Connection;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -57,10 +56,10 @@ SQL;
         return $this->hydrate($rawPost);
     }
 
-    public function insert(Post $model): ?Post
+    public function insert(Post $model): Post
     {
         $sql = <<<'SQL'
-        INSERT INTO app_posts ("uuid", "user_id", "text") VALUES (:uuid, :user_id, :text)
+        INSERT INTO app_posts ("uuid", "user_id", "text", "created_at") VALUES (:uuid, :user_id, :text, :created_at)
 SQL;
         $this->getConnection(true)->executeQuery(
             $sql,
@@ -68,10 +67,14 @@ SQL;
                 'uuid' => (string) $model->getUUID(),
                 'user_id' => $model->getUserId(),
                 'text' => $model->getText(),
+                'created_at' => (new \DateTimeImmutable("now", new \DateTimeZone("UTC")))->format("c"),
             ]
             );
 
-        return $this->getByUUID($model->getUUID(), true);
+        $post = $this->getByUUID($model->getUUID(), true);
+        assert($post !== null);
+
+        return $post;
     }
 
     public function update(Post $model): ?Post
@@ -103,6 +106,23 @@ SQL;
         );
 
         return ($rowCount > 0);
+    }
+
+    /**
+     * @param positive-int $limit
+     *
+     * @return Post[]
+     */
+    public function findFeedPostsForUser(int $userId, int $limit = 1000): array
+    {
+        $sql = <<<'SQL'
+        SELECT * FROM app_posts WHERE user_id IN (
+            SELECT friend_id FROM app_user_friends WHERE user_id=:user_id
+        )
+        ORDER BY id DESC LIMIT :limit
+SQL;
+
+        return $this->hydrateAll($this->getConnection()->fetchAllAssociative($sql, ['user_id' => $userId, 'limit' => $limit]));
     }
 
     protected function hydrate(array|bool $rawData): ?Post
