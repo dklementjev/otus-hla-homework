@@ -3,13 +3,18 @@
 namespace App\Model;
 
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class Post implements ModelInterface
 {
     public function __construct(
         protected readonly ?int $id,
         protected readonly int $userId,
+        #[Groups(['default_view'])]
+        #[SerializedName('id')]
         protected readonly UuidInterface $uuid,
+        #[Groups(['default_view'])]
         protected ?string $text = null
     ) {}
 

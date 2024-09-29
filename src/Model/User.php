@@ -5,22 +5,34 @@ namespace App\Model;
 use App\Security\UserRole;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 class User implements PasswordAuthenticatedUserInterface, UserInterface, ModelInterface
 {
+    #[Groups('default_view')]
+    #[SerializedName('first_name')]
     protected string $firstName;
 
+    #[Groups('default_view')]
+    #[SerializedName('second_name')]
     protected string $lastName;
 
+    #[Groups('default_view')]
     protected \DateTimeInterface $birthdate;
 
+    #[Groups('default_view')]
+    #[SerializedName('biography')]
     protected string $bio;
 
+    #[Groups('default_view')]
     protected string $city;
 
     protected string $passwordHash;
 
     public function __construct(
+        #[Groups(['register_view'])]
+        #[SerializedName('id')]
         protected readonly ?int $id = null
     ) {}
 

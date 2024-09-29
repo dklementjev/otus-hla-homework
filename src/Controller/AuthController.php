@@ -3,27 +3,32 @@
 namespace App\Controller;
 
 use App\DTO\Auth\LoginRequest;
-use App\DTO\Auth\LoginResponse;
 use App\Repository\AccessTokenRepository;
 use App\Repository\UserRepository;
 use SensitiveParameter;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route(name: 'auth_')]
-class AuthController
+class AuthController extends BaseController
 {
     public function __construct(
         protected readonly UserRepository $userRepository,
         protected readonly AccessTokenRepository $accessTokenRepository,
-        protected readonly UserPasswordHasherInterface $passwordHasher
-    ) {}
+        protected readonly UserPasswordHasherInterface $passwordHasher,
+        SerializerInterface $serializer,
+        #[Autowire(param: 'controller.default_json_encode_options')]
+        int $jsonEncodeOptions
+    ) {
+        parent::__construct($serializer, $jsonEncodeOptions);
+    }
 
     #[Route(path: '/login', methods: ['POST'], name: 'login')]
     public function login(
@@ -45,10 +50,9 @@ class AuthController
         ;
         $this->accessTokenRepository->insert($accessToken);
         
-        $dto = new LoginResponse($accessToken->getRawToken());
-
         return new JsonResponse(
-            $dto
+            $this->jsonSerialize(['token'=>$accessToken->getRawToken()], []),
+            json: true
         );
     }
 }
