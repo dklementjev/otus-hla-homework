@@ -16,8 +16,14 @@
     </head>
     <body>
         <div class="container-fluid">
-            {% block sidebar %}{% endblock %}
-            {% block body %}{% endblock %}
+            <div class="row">
+                <div class="col col-3">
+                    {%- block sidebar %}{% include 'blocks/sidebar.html.twig' %}{% endblock -%}
+                </div>
+                <div class="col col-9">
+                    {%- block body %}{% endblock -%}
+                </div>
+            </div>
         </div>
     </body>
 </html>
