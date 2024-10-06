@@ -12,6 +12,10 @@ doctrine:
                 profiling_collect_backtrace: '%kernel.debug%'
                 use_savepoints: true
                 url: '%env(resolve:DATABASE_URL_SLAVE)%'
+            dialog:
+                profiling_collect_backtrace: '%kernel.debug%'
+                use_savepoints: true
+                url: '%env(resolve:DATABASE_URL_DIALOG)%'
     
 when@test:
     doctrine:
