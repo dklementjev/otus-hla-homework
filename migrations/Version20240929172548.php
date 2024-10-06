@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Utils\Migration\ForeignMigration;
+use App\Utils\Migration\UseConnection;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
 
-final class Version20240929172548 extends AbstractMigration
+#[UseConnection('dialog')]
+final class Version20240929172548 extends ForeignMigration
 {
     public function getDescription(): string
     {
@@ -16,6 +18,8 @@ final class Version20240929172548 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $connection = $this->getConnection();
+
         $sql = <<<'SQL'
         CREATE TABLE app_dialogs (
             id BIGSERIAL PRIMARY KEY, 
@@ -23,7 +27,7 @@ final class Version20240929172548 extends AbstractMigration
             created_at TIMESTAMP WITH TIME ZONE
         )
 SQL;
-        $this->addSql($sql);
+        $connection->executeQuery($sql);
 
         $sql = <<<'SQL'
         CREATE TABLE app_dialog_participants (
@@ -32,7 +36,7 @@ SQL;
             PRIMARY KEY (dialog_id, user_id)
         )
 SQL;
-        $this->addSql($sql);
+        $connection->executeQuery($sql);
 
         $sql = <<<'SQL'
         CREATE TABLE app_dialog_messages (
@@ -44,20 +48,22 @@ SQL;
             created_at TIMESTAMP WITH TIME ZONE
         )
 SQL;
-        $this->addSql($sql);
+        $connection->executeQuery($sql);
 
         $sql = <<<'SQL'
         CREATE INDEX idx_thread_messages ON app_dialog_messages(dialog_id, created_at DESC)
 SQL;
-        $this->addSql($sql);
+        $connection->executeQuery($sql);
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP INDEX idx_thread_messages');
+        $connection = $this->getConnection();
 
-        $this->addSql('DROP TABLE app_dialog_messages');
-        $this->addSql('DROP TABLE app_dialog_participants');
-        $this->addSql('DROP TABLE app_dialogs');
+        $connection->executeQuery('DROP INDEX idx_thread_messages');
+
+        $connection->executeQuery('DROP TABLE app_dialog_messages');
+        $connection->executeQuery('DROP TABLE app_dialog_participants');
+        $connection->executeQuery('DROP TABLE app_dialogs');
     }
 }
