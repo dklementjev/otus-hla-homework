@@ -28,6 +28,7 @@ services:
     networks:
       - front
       - back
+      - db-citus
 
   messenger-worker:
     build:
@@ -167,6 +168,8 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
     secrets:
       - postgres-citus-password
+    networks:
+      - db-citus
 
   citus-worker:
     image: "citusdata/citus:12.1.3"
@@ -180,6 +183,8 @@ services:
       - postgres-citus-password
     volumes:
       - healthcheck-volume:/healthcheck
+    networks:
+      - db-citus
 
   citus-manager:
     container_name: citus_manager
@@ -195,6 +200,8 @@ services:
     environment: *CITUS_AUTH
     secrets:
       - postgres-citus-password
+    networks:
+      - db-citus
 
 volumes:
   db-data: ~
@@ -206,6 +213,7 @@ networks:
   front: ~
   back: ~
   db: ~
+  db-citus: ~
 
 secrets:
   postgresql-password:
