@@ -153,10 +153,54 @@ services:
     mem_reservation: 128M
     mem_limit: 128M
 
+  citus-master:
+    container_name: citus_master
+    image: "citusdata/citus:12.1.3"
+    ports:
+      - "26432:5432"
+    labels:
+      - "com.citusdata.role=Master"
+    environment: &CITUS_AUTH
+      CITUS_HOST: citus-master
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-citus-password
+      POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
+    secrets:
+      - postgres-citus-password
+
+  citus-worker:
+    image: "citusdata/citus:12.1.3"
+    labels:
+      - "com.citusdata.role=Worker"
+    depends_on:
+      - citus-manager
+    environment: *CITUS_AUTH
+    command: "/wait-for-manager.sh"
+    secrets:
+      - postgres-citus-password
+    volumes:
+      - healthcheck-volume:/healthcheck
+
+  citus-manager:
+    container_name: citus_manager
+    build:
+      context: ./services/postgresql
+      dockerfile: citus-manager.Dockerfile
+    entrypoint: ["/bin/sh", "-c", "/manager-entrypoint.sh"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - healthcheck-volume:/healthcheck
+    depends_on:
+      - citus-master
+    environment: *CITUS_AUTH
+    secrets:
+      - postgres-citus-password
+
 volumes:
   db-data: ~
   db-data-slave1: ~
   db-data-slave2: ~
+  healthcheck-volume: ~
 
 networks:
   front: ~
@@ -168,6 +212,8 @@ secrets:
     file: ./services/postgresql/password.txt
   postgresql-replication-password:
     file: ./services/postgresql/replication-password.txt
+  postgres-citus-password:
+    file: ./services/postgresql/citus-password.txt
   redis-cache-password:
     file: ./services/redis/cache-password.txt
   redis-queue-password:
