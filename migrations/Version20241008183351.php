@@ -37,9 +37,9 @@ final class Version20241008183351 extends ForeignMigration
 
     protected function createReferenceTable(string $tableName)
     {
-        $sql = <<<'SQL'
-        SELECT create_reference_table(:table_name) 
-SQL;
-        $this->getConnection()->executeQuery($sql, ['table_name' => $tableName]);
+        $this->executeSql(
+            'SELECT create_reference_table(:table_name) ',
+            ['table_name' => $tableName]
+        );
     }
 }

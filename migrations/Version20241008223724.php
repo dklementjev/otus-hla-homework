@@ -18,47 +18,23 @@ final class Version20241008223724 extends ForeignMigration
 
     public function up(Schema $schema): void
     {
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_pkey;
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_pkey;');
 
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages ADD PRIMARY KEY (dialog_id, id);
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages ADD PRIMARY KEY (dialog_id, id);');
 
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_uuid_key;
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_uuid_key;');
 
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages ADD CONSTRAINT app_dialog_messages_uuid_key UNIQUE (dialog_id, "uuid")
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages ADD CONSTRAINT app_dialog_messages_uuid_key UNIQUE (dialog_id, "uuid")');
     }
 
     public function down(Schema $schema): void
     {
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_uuid_key;
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_uuid_key;');
 
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages ADD CONSTRAINT app_dialog_messages_uuid_key UNIQUE ("uuid")
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages ADD CONSTRAINT app_dialog_messages_uuid_key UNIQUE ("uuid")');
 
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_pkey;
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages DROP CONSTRAINT app_dialog_messages_pkey;');
 
-        $sql = <<<'SQL'
-        ALTER TABLE app_dialog_messages ADD PRIMARY KEY (id);
-SQL;
-        $this->getConnection()->executeQuery($sql);
+        $this->executeSql('ALTER TABLE app_dialog_messages ADD PRIMARY KEY (id);');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Utils\Migration;
 
 use Doctrine\Bundle\MigrationsBundle\Tests\Fixtures\Migrations\ContainerAwareMigration;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Result;
 
 abstract class ForeignMigration extends ContainerAwareMigration
 {
@@ -28,5 +29,13 @@ abstract class ForeignMigration extends ContainerAwareMigration
         }
 
         return $res;
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function executeSql(string $sql, array $params = []): Result
+    {
+        return $this->getConnection()->executeQuery($sql, $params);
     }
 }

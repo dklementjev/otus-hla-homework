@@ -18,17 +18,17 @@ final class Version20241008225623 extends ForeignMigration
 
     public function up(Schema $schema): void
     {
-        $sql = <<<'SQL'
-        SELECT create_distributed_table(:table_name, :distribution_column)
-SQL;
-        $this->getConnection()->executeQuery($sql, ['app_dialog_messages', 'dialog_id']);
+        $this->executeSql(
+            'SELECT create_distributed_table(:table_name, :distribution_column)',
+            ['app_dialog_messages', 'dialog_id']
+        );
     }
 
     public function down(Schema $schema): void
     {
-        $sql = <<<'SQL'
-        SELECT undistribute_table(:table_name)
-SQL;
-        $this->getConnection()->executeQuery($sql, ['app_dialog_messages']);
+        $this->getConnection()->executeQuery(
+            'SELECT undistribute_table(:table_name)',
+            ['app_dialog_messages']
+        );
     }
 }

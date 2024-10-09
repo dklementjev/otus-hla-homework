@@ -18,15 +18,13 @@ final class Version20240929172548 extends ForeignMigration
 
     public function up(Schema $schema): void
     {
-        $connection = $this->getConnection();
-
         $sql = <<< 'SQL'
         CREATE TABLE app_dialog_users (
             id BIGINT PRIMARY KEY,
             nickname VARCHAR(128)
         )
 SQL;
-        $connection->executeQuery($sql);
+        $this->executeSql($sql);
 
         $sql = <<<'SQL'
         CREATE TABLE app_dialogs (
@@ -35,7 +33,7 @@ SQL;
             created_at TIMESTAMP WITH TIME ZONE
         )
 SQL;
-        $connection->executeQuery($sql);
+        $this->executeSql($sql);
 
         $sql = <<<'SQL'
         CREATE TABLE app_dialog_participants (
@@ -44,7 +42,7 @@ SQL;
             PRIMARY KEY (dialog_id, user_id)
         )
 SQL;
-        $connection->executeQuery($sql);
+        $this->executeSql($sql);
 
         $sql = <<<'SQL'
         CREATE TABLE app_dialog_messages (
@@ -56,23 +54,22 @@ SQL;
             created_at TIMESTAMP WITH TIME ZONE
         )
 SQL;
-        $connection->executeQuery($sql);
+        $this->executeSql($sql);
 
         $sql = <<<'SQL'
         CREATE INDEX idx_thread_messages ON app_dialog_messages(dialog_id, created_at DESC)
 SQL;
-        $connection->executeQuery($sql);
+        $this->executeSql($sql);
+
     }
 
     public function down(Schema $schema): void
     {
-        $connection = $this->getConnection();
+        $this->executeSql('DROP INDEX idx_thread_messages');
 
-        $connection->executeQuery('DROP INDEX idx_thread_messages');
-
-        $connection->executeQuery('DROP TABLE app_dialog_messages');
-        $connection->executeQuery('DROP TABLE app_dialog_participants');
-        $connection->executeQuery('DROP TABLE app_dialogs');
-        $connection->executeQuery('DROP TABLE app_dialog_users');
+        $this->executeSql('DROP TABLE app_dialog_messages');
+        $this->executeSql('DROP TABLE app_dialog_participants');
+        $this->executeSql('DROP TABLE app_dialogs');
+        $this->executeSql('DROP TABLE app_dialog_users');
     }
 }
