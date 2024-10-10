@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
  *
  * @template-extends BaseRepository<RawUserFriend, UserFriend>
  */
+#[ModelClass(UserFriend::class)]
 class UserFriendRepository extends BaseRepository
 {
     public function getByUserIdAndFriendId(int $userId, int $friedndId): ?UserFriend
