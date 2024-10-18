@@ -13,7 +13,8 @@ class DialogMessage implements ModelInterface
         protected readonly int $dialogId,
         protected string $message,
         protected readonly \DateTimeInterface $createdAt
-    ) {}
+    ) {
+    }
 
     public function getId(): ?int
     {

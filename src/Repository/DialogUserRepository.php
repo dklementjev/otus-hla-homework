@@ -85,7 +85,7 @@ class DialogUserRepository extends BaseRepository
             )
         ;
         $this->commitTransaction($isMaster);
-        if ($rowCount<1) {
+        if ($rowCount < 1) {
             throw new \LogicException();
         }
 

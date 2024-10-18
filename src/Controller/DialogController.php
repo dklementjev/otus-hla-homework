@@ -25,17 +25,16 @@ class DialogController extends BaseController
         SerializerInterface $serializer,
         #[Autowire(param: 'controller.default_json_encode_options')]
         int $jsonEncodeOptions
-    ){
+    ) {
         parent::__construct($serializer, $jsonEncodeOptions);
     }
 
-    #[Route(name: 'pm_send', path: '/{other_user_id}/send', methods: ['POST'], requirements: ['other_user_id'=>'\d+'])]
+    #[Route(name: 'pm_send', path: '/{other_user_id}/send', methods: ['POST'], requirements: ['other_user_id' => '\d+'])]
     public function sendMessageAction(
         string $other_user_id,
         #[MapRequestPayload(acceptFormat:'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         CreateMessage $requestDto
-    ): Response
-    {
+    ): Response {
         /** @var User */
         $user = $this->security->getUser();
         $sessionUserId = $user->getId();
@@ -51,7 +50,7 @@ class DialogController extends BaseController
         );
     }
 
-    #[Route(name: 'pm_list', path: '/{other_user_id}/list', methods: ['GET'], requirements: ['other_user_id'=>'\d+'])]
+    #[Route(name: 'pm_list', path: '/{other_user_id}/list', methods: ['GET'], requirements: ['other_user_id' => '\d+'])]
     public function listDialogMessagesAction(string $other_user_id): Response
     {
         /** @var User */

@@ -11,7 +11,8 @@ class Dialog implements ModelInterface
         protected readonly UuidInterface $uuid,
         protected readonly \DateTimeInterface $createdAt,
         protected readonly bool $isGroupchat
-    ) {}
+    ) {
+    }
 
     public function getId(): ?int
     {

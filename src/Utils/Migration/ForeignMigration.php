@@ -8,7 +8,7 @@ use Doctrine\DBAL\Result;
 
 abstract class ForeignMigration extends ContainerAwareMigration
 {
-    protected function addSql(string $sql, array $params = [], array $types = [],): void
+    protected function addSql(string $sql, array $params = [], array $types = []): void
     {
         throw new \LogicException("Default addSql is prohibited here");
     }
