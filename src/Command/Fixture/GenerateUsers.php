@@ -38,11 +38,11 @@ class GenerateUsers extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $limit = (int) $input->getOption("limit");
-        if ($limit<1) {
+        if ($limit < 1) {
             throw new \InvalidArgumentException("Limit must be non-negative");
         }
         $chunkSize = (int) $input->getOption("chunk-size");
-        if ($chunkSize<1) {
+        if ($chunkSize < 1) {
             throw new \InvalidArgumentException("Chunk size must be non-negative");
         }
         $this->generateUsers($chunkSize, $limit, $output);
@@ -59,15 +59,15 @@ class GenerateUsers extends Command
         $userCount = $this->userUtils->count();
         $UTC = new \DateTimeZone("UTC");
 
-        while($userCount<$limit) {
+        while ($userCount < $limit) {
             if ($output->isVerbose()) {
                 $output->writeln("Current user count: <info>{$userCount}</info>");
             }
 
-            $this->dbConnection->transactional(fn () => $this->generateChunk(min($chunkSize, $limit-$userCount), $UTC) );
+            $this->dbConnection->transactional(fn () => $this->generateChunk(min($chunkSize, $limit - $userCount), $UTC));
 
             $newUserCount = $this->userUtils->count();
-            if ($userCount===$newUserCount) {
+            if ($userCount === $newUserCount) {
                 throw new \UnexpectedValueException("No users added in current iteration");
             }
             $userCount = $newUserCount;
@@ -76,7 +76,7 @@ class GenerateUsers extends Command
 
     protected function generateChunk(int $count, \DateTimeZone $tz): void
     {
-        for ($i=0; $i<$count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $model = $this->userRepository->create();
             $model->setFirstName($this->faker->firstName())
                 ->setLastName($this->faker->lastName())

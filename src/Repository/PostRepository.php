@@ -38,7 +38,7 @@ class PostRepository extends BaseRepository
         SELECT COUNT(*) AS count FROM app_posts WHERE "uuid"=:uuid
 SQL;
 
-        return (int) $this->getConnection()->fetchOne($sql, ['uuid'=>(string) $uuid]);
+        return (int) $this->getConnection()->fetchOne($sql, ['uuid' => (string) $uuid]);
     }
 
     public function getByUUID(UuidInterface $uuid, bool $useMaster = false): ?Post
@@ -70,7 +70,7 @@ SQL;
                 'text' => $model->getText(),
                 'created_at' => (new \DateTimeImmutable("now", new \DateTimeZone("UTC")))->format("c"),
             ]
-            );
+        );
 
         $post = $this->getByUUID($model->getUUID(), true);
         assert($post !== null);
@@ -89,7 +89,7 @@ SQL;
                 'uuid' => (string) $model->getUUID(),
                 'text' => $model->getText(),
             ]
-            );
+        );
 
         return $this->getByUUID($model->getUUID(), true);
     }

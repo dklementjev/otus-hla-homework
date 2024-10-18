@@ -18,7 +18,7 @@ final class GenerateTestData extends Command
     public function __construct(
         protected readonly Connection $dbConnection,
         ?string $name = null
-    ) { 
+    ) {
         parent::__construct($name);
     }
 
@@ -61,7 +61,7 @@ final class GenerateTestData extends Command
         $isDone = false;
 
         $sql = "INSERT INTO ".self::TABLE_NAME." (value) VALUES (?)";
-        for ($i=0; $i<$rowCount; $i++) {
+        for ($i = 0; $i < $rowCount; $i++) {
             try {
                 $sth = $this->dbConnection->executeQuery($sql, [random_int(0, 1e9)]);
             } catch (\Exception $e) {
@@ -69,7 +69,7 @@ final class GenerateTestData extends Command
                 $isDone = true;
             }
 
-            if ($sth?->rowCount()>0) {
+            if ($sth?->rowCount() > 0) {
                 $res += 1;
             }
             if ($isDone) {
@@ -78,7 +78,7 @@ final class GenerateTestData extends Command
         }
 
         return [
-            $isDone, 
+            $isDone,
             $res
         ];
     }

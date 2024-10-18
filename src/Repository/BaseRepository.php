@@ -34,7 +34,7 @@ abstract class BaseRepository
     {
         return array_filter(
             array_map(
-                fn($rawData) => $this->hydrate($rawData),
+                fn ($rawData) => $this->hydrate($rawData),
                 $rawDataArray
             )
         );

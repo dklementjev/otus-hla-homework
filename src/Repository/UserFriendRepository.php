@@ -43,7 +43,7 @@ SQL;
                 'user_id' => $userId,
                 'friend_id' => $friedndId,
             ]
-            );
+        );
     }
 
     public function addFriendId(int $userId, int $friendId): int

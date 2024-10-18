@@ -7,8 +7,9 @@ use SensitiveParameter;
 final readonly class LoginRequest
 {
     public function __construct(
-        public string $id, 
+        public string $id,
         #[SensitiveParameter]
         public string $password
-    ) {}
+    ) {
+    }
 }

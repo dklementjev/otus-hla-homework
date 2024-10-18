@@ -10,7 +10,8 @@ readonly class Post
 {
     public function __construct(
         protected Model\Post $post
-    ) {}
+    ) {
+    }
 
     public function getPost(): Model\Post
     {

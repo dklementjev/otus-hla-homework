@@ -35,13 +35,13 @@ class GenerateTestPosts extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $iterationCount = (int) $input->getOption("iterations");
-        if ($iterationCount<1) {
+        if ($iterationCount < 1) {
             throw new \InvalidArgumentException('Iteration count is invalid');
         }
 
         $postCountMin = (int) $input->getOption("post-count-min");
         $postCountMax = (int) $input->getOption("post-count-max");
-        if ($postCountMin>$postCountMax) {
+        if ($postCountMin > $postCountMax) {
             throw new \InvalidArgumentException('Post count options are invalid');
         }
 
@@ -62,7 +62,7 @@ class GenerateTestPosts extends Command
     {
         $res = 0;
 
-        for ($i=0; $i<$postCount; $i++) {
+        for ($i = 0; $i < $postCount; $i++) {
             if ($this->generatePost($userId)) {
                 $res += 1;
             }
