@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\DTO\Dialog\CreateMessage;
-use App\Model\DialogMessage;
 use App\Model\User;
 use App\Utils\Model as ModelUtils;
 use Symfony\Bundle\SecurityBundle\Security;
