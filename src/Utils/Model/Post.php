@@ -21,7 +21,8 @@ class Post
         protected readonly CacheInterface $feedCache,
         protected readonly int $feedCacheLifetime,
         protected readonly EventDispatcherInterface $eventDispatcher,
-    ) {}
+    ) {
+    }
 
     public function createFromDTO(int $userId, DTO\Post\CreatePost $dto): Model\Post
     {
@@ -76,7 +77,7 @@ class Post
 
         return $this->feedCache->get(
             $cacheKey,
-            function (ItemInterface $item) use ($cacheLifetime, $postRepository, $userId)  {
+            function (ItemInterface $item) use ($cacheLifetime, $postRepository, $userId) {
                 //TODO: lock ?
                 $posts = $postRepository->findFeedPostsForUser($userId);
                 $item->expiresAfter($cacheLifetime);

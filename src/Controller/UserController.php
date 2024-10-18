@@ -22,7 +22,6 @@ class UserController extends BaseController
         SerializerInterface $serializer,
         #[Autowire(param: 'controller.default_json_encode_options')]
         int $jsonEncodeOptions
-
     ) {
         parent::__construct($serializer, $jsonEncodeOptions);
     }
@@ -47,7 +46,7 @@ class UserController extends BaseController
         if (empty($user)) {
             throw new NotFoundHttpException("User not found");
         }
-        
+
         return new JsonResponse(
             $this->jsonSerialize($user, 'default_view'),
             json: true
@@ -72,5 +71,5 @@ class UserController extends BaseController
             ),
             json: true
         );
-   }
+    }
 }

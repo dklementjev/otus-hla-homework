@@ -10,7 +10,8 @@ class AccessToken implements ModelInterface
 
     public function __construct(
         protected readonly ?int $id = null
-    ) {}
+    ) {
+    }
 
     public function getUserId(): int
     {

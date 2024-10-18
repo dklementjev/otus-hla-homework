@@ -11,7 +11,8 @@ final class FeedCacheInvalidate
 {
     public function __construct(
         protected readonly Utils\Model\Post $postUtils
-    ) {}
+    ) {
+    }
 
     public function __invoke(Message\FeedCacheInvalidate $message): void
     {

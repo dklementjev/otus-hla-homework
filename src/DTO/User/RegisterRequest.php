@@ -8,18 +8,19 @@ final readonly class RegisterRequest
 {
     public function __construct(
         #[Assert\NotBlank]
-        public string $first_name,    
+        public string $first_name,
         #[Assert\NotBlank]
-        public string $second_name,    
+        public string $second_name,
         #[Assert\NotBlank]
         #[Assert\Date()]
-        public string $birthdate,    
+        public string $birthdate,
         #[Assert\NotBlank]
-        public string $biography,    
+        public string $biography,
         #[Assert\NotBlank]
-        public string $city,    
+        public string $city,
         #[Assert\NotBlank]
         #[Assert\PasswordStrength(minScore: 2)]
         public string $password
-    ) {}
+    ) {
+    }
 }

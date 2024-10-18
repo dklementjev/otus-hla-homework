@@ -16,7 +16,8 @@ class Post implements ModelInterface
         protected readonly UuidInterface $uuid,
         #[Groups(['default_view'])]
         protected ?string $text = null
-    ) {}
+    ) {
+    }
 
     public function getId(): ?int
     {

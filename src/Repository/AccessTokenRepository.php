@@ -24,7 +24,7 @@ class AccessTokenRepository extends BaseRepository
         $sql = 'SELECT * FROM app_access_tokens WHERE id=:id';
 
         /** @var false|RawAccessToken */
-        $rawData = $this->getConnection()->fetchAssociative($sql, ['id'=>$id]);
+        $rawData = $this->getConnection()->fetchAssociative($sql, ['id' => $id]);
 
         return $this->hydrate($rawData);
     }
@@ -34,7 +34,7 @@ class AccessTokenRepository extends BaseRepository
         $sql = 'SELECT * FROM app_access_tokens WHERE token=:access_token';
 
         /** @var false|RawAccessToken */
-        $rawData = $this->getConnection()->fetchAssociative($sql, ['access_token'=>$accessToken]);
+        $rawData = $this->getConnection()->fetchAssociative($sql, ['access_token' => $accessToken]);
 
         return $this->hydrate($rawData);
     }

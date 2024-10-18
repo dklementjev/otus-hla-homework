@@ -13,7 +13,8 @@ final class FriendFeedsUpdate
     public function __construct(
         protected readonly MessageBusInterface $messageBus,
         protected readonly Utils\Model\UserFriend $userFriendUtils
-    ) {}
+    ) {
+    }
 
     public function __invoke(Message\FriendFeedsUpdate $message): void
     {
