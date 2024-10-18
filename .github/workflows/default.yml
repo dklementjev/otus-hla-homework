@@ -1,0 +1,20 @@
+on:
+  push:
+    branches: [ $default-branch, $protected-branches ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ $default-branch ]
+    
+jobs:
+  php:
+    name: "Run PHP linters"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php-cs-fixer.dist.php --diff --dry-run
+
+        
