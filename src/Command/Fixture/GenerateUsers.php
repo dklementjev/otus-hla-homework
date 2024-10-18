@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'dev')]
-#[AsCommand(name: "fixture:generate-users")]
+#[AsCommand(name: 'fixture:generate-users')]
 class GenerateUsers extends Command
 {
     public function __construct(
@@ -29,21 +29,21 @@ class GenerateUsers extends Command
 
     protected function configure()
     {
-        $this->setDescription("Generate users up to limit")
-            ->addOption("limit", null, InputOption::VALUE_REQUIRED, "Max user count")
-            ->addOption("chunk-size", null, InputOption::VALUE_REQUIRED, "Max chunk size", 100)
+        $this->setDescription('Generate users up to limit')
+            ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Max user count')
+            ->addOption('chunk-size', null, InputOption::VALUE_REQUIRED, 'Max chunk size', 100)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $limit = (int) $input->getOption("limit");
+        $limit = (int) $input->getOption('limit');
         if ($limit < 1) {
-            throw new \InvalidArgumentException("Limit must be non-negative");
+            throw new \InvalidArgumentException('Limit must be non-negative');
         }
-        $chunkSize = (int) $input->getOption("chunk-size");
+        $chunkSize = (int) $input->getOption('chunk-size');
         if ($chunkSize < 1) {
-            throw new \InvalidArgumentException("Chunk size must be non-negative");
+            throw new \InvalidArgumentException('Chunk size must be non-negative');
         }
         $this->generateUsers($chunkSize, $limit, $output);
 
@@ -57,7 +57,7 @@ class GenerateUsers extends Command
     protected function generateUsers(int $chunkSize, int $limit, OutputInterface $output): void
     {
         $userCount = $this->userUtils->count();
-        $UTC = new \DateTimeZone("UTC");
+        $UTC = new \DateTimeZone('UTC');
 
         while ($userCount < $limit) {
             if ($output->isVerbose()) {
@@ -68,7 +68,7 @@ class GenerateUsers extends Command
 
             $newUserCount = $this->userUtils->count();
             if ($userCount === $newUserCount) {
-                throw new \UnexpectedValueException("No users added in current iteration");
+                throw new \UnexpectedValueException('No users added in current iteration');
             }
             $userCount = $newUserCount;
         }
@@ -76,14 +76,14 @@ class GenerateUsers extends Command
 
     protected function generateChunk(int $count, \DateTimeZone $tz): void
     {
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; ++$i) {
             $model = $this->userRepository->create();
             $model->setFirstName($this->faker->firstName())
                 ->setLastName($this->faker->lastName())
                 ->setBirthdate(new \DateTimeImmutable($this->faker->date(max: '-20 years'), $tz))
                 ->setCity($this->faker->city())
-                ->setBio("")
-                ->setPasswordHash("<invalid>")
+                ->setBio('')
+                ->setPasswordHash('<invalid>')
             ;
             $this->userRepository->insert($model);
         }

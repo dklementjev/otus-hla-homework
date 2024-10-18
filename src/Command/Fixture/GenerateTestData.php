@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'dev')]
-#[AsCommand(name: "fixture:generate-test-data")]
+#[AsCommand(name: 'fixture:generate-test-data')]
 final class GenerateTestData extends Command
 {
     protected const TABLE_NAME = 'test_data';
@@ -24,7 +24,7 @@ final class GenerateTestData extends Command
 
     protected function configure()
     {
-        $this->setDescription("Generate some test data in DB");
+        $this->setDescription('Generate some test data in DB');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -47,7 +47,7 @@ final class GenerateTestData extends Command
 
     protected function wipeData(): void
     {
-        $sql = "DELETE FROM ".self::TABLE_NAME;
+        $sql = 'DELETE FROM '.self::TABLE_NAME;
 
         $this->dbConnection->executeQuery($sql);
     }
@@ -60,8 +60,8 @@ final class GenerateTestData extends Command
         $res = 0;
         $isDone = false;
 
-        $sql = "INSERT INTO ".self::TABLE_NAME." (value) VALUES (?)";
-        for ($i = 0; $i < $rowCount; $i++) {
+        $sql = 'INSERT INTO '.self::TABLE_NAME.' (value) VALUES (?)';
+        for ($i = 0; $i < $rowCount; ++$i) {
             try {
                 $sth = $this->dbConnection->executeQuery($sql, [random_int(0, 1e9)]);
             } catch (\Exception $e) {
@@ -70,7 +70,7 @@ final class GenerateTestData extends Command
             }
 
             if ($sth?->rowCount() > 0) {
-                $res += 1;
+                ++$res;
             }
             if ($isDone) {
                 break;
@@ -79,7 +79,7 @@ final class GenerateTestData extends Command
 
         return [
             $isDone,
-            $res
+            $res,
         ];
     }
 }

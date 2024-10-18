@@ -14,7 +14,7 @@ class HomeController
             'OK',
             Response::HTTP_OK,
             [
-                'content-type' => "text/plain",
+                'content-type' => 'text/plain',
             ]
         );
     }

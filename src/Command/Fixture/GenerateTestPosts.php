@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'dev')]
-#[AsCommand(name: "fixture:generate-test-posts")]
+#[AsCommand(name: 'fixture:generate-test-posts')]
 class GenerateTestPosts extends Command
 {
     public function __construct(
@@ -25,22 +25,22 @@ class GenerateTestPosts extends Command
 
     protected function configure()
     {
-        $this->setDescription("Generate test posts")
-            ->addOption("post-count-min", null, InputOption::VALUE_REQUIRED, "Min post count", 10)
-            ->addOption("post-count-max", null, InputOption::VALUE_REQUIRED, "Max post count", 100)
-            ->addOption("iterations", null, InputOption::VALUE_REQUIRED, "Generation iteration count", 1)
+        $this->setDescription('Generate test posts')
+            ->addOption('post-count-min', null, InputOption::VALUE_REQUIRED, 'Min post count', 10)
+            ->addOption('post-count-max', null, InputOption::VALUE_REQUIRED, 'Max post count', 100)
+            ->addOption('iterations', null, InputOption::VALUE_REQUIRED, 'Generation iteration count', 1)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $iterationCount = (int) $input->getOption("iterations");
+        $iterationCount = (int) $input->getOption('iterations');
         if ($iterationCount < 1) {
             throw new \InvalidArgumentException('Iteration count is invalid');
         }
 
-        $postCountMin = (int) $input->getOption("post-count-min");
-        $postCountMax = (int) $input->getOption("post-count-max");
+        $postCountMin = (int) $input->getOption('post-count-min');
+        $postCountMax = (int) $input->getOption('post-count-max');
         if ($postCountMin > $postCountMax) {
             throw new \InvalidArgumentException('Post count options are invalid');
         }
@@ -62,9 +62,9 @@ class GenerateTestPosts extends Command
     {
         $res = 0;
 
-        for ($i = 0; $i < $postCount; $i++) {
+        for ($i = 0; $i < $postCount; ++$i) {
             if ($this->generatePost($userId)) {
-                $res += 1;
+                ++$res;
             }
         }
 

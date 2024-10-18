@@ -31,7 +31,7 @@ class UserProvider implements UserProviderInterface
 
     public function refreshUser(UserInterface $user): UserInterface
     {
-        throw new \LogicException("Not implemented");
+        throw new \LogicException('Not implemented');
     }
 
     public function supportsClass(string $class): bool

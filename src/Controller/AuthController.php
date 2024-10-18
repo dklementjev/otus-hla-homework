@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\DTO\Auth\LoginRequest;
 use App\Repository\AccessTokenRepository;
 use App\Repository\UserRepository;
-use SensitiveParameter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,13 +31,13 @@ class AuthController extends BaseController
 
     #[Route(path: '/login', methods: ['POST'], name: 'login')]
     public function login(
-        #[SensitiveParameter]
+        #[\SensitiveParameter]
         #[MapRequestPayload(acceptFormat: 'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         LoginRequest $loginDto
     ): Response {
         $user = $this->userRepository->getById($loginDto->id);
         if (!$user) {
-            throw new NotFoundHttpException("User not found");
+            throw new NotFoundHttpException('User not found');
         }
         if (!$this->passwordHasher->isPasswordValid($user, $loginDto->password)) {
             throw new HttpException(Response::HTTP_UNAUTHORIZED);
