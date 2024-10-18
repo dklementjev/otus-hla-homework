@@ -30,6 +30,11 @@ class DialogMessage implements ModelInterface
         return $this->userId;
     }
 
+    public function getDialogId(): int
+    {
+        return $this->dialogId;
+    }
+
     public function getMessage(): string
     {
         return $this->message;
