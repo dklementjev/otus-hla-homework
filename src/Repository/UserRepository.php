@@ -22,7 +22,7 @@ class UserRepository extends BaseRepository
         $sql = 'SELECT * FROM app_users AS u WHERE u.id=:user_id';
 
         /** @var false|RawUser */
-        $rawData = $this->getConnection()->fetchAssociative($sql, ['user_id' => $userId ]);
+        $rawData = $this->getConnection()->fetchAssociative($sql, ['user_id' => $userId]);
 
         return $this->hydrate($rawData);
     }
@@ -43,11 +43,11 @@ SQL;
                     'birthdate' => $user->getBirthdate()->format('Y-m-d'),
                     'bio' => $user->getBio(),
                     'city' => $user->getCity(),
-                    'password_hash' => $user->getPasswordHash()
+                    'password_hash' => $user->getPasswordHash(),
                 ]
             )
         ;
-        /** @var null|int */
+        /** @var int|null */
         $userId = $this->getConnection(true)->lastInsertId();
 
         return $userId ? $this->getById($userId) : null;
@@ -87,7 +87,7 @@ SQL;
         );
 
         while ($row = $sth->fetchAssociative()) {
-            /** @var false|RawUser $row */
+            /* @var false|RawUser $row */
             $res[] = $this->hydrate($row);
         }
 
@@ -109,7 +109,7 @@ SQL;
             $sql,
             [
                 'percent' => $percent,
-                'max_items' => $count
+                'max_items' => $count,
             ]
         );
 

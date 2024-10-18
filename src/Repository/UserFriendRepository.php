@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Model\UserFriend;
-use Doctrine\DBAL\Connection;
 
 /**
  * @phpstan-type RawUserFriend array{user_id: int, friend_id: int}
@@ -37,6 +36,7 @@ SQL;
         DELETE FROM app_user_friends AS uf
             WHERE user_id=:user_id AND friend_id=:friend_id
 SQL;
+
         return (int) $this->getConnection(true)->executeStatement(
             $sql,
             [
@@ -53,11 +53,12 @@ SQL;
             VALUES (:user_id, :friend_id)
             ON CONFLICT DO NOTHING
 SQL;
+
         return (int) $this->getConnection(true)->executeStatement(
             $sql,
             [
                 'user_id' => $userId,
-                'friend_id' => $friendId
+                'friend_id' => $friendId,
             ]
         );
     }

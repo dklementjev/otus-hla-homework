@@ -2,8 +2,8 @@
 
 namespace App\Messenger\Handler;
 
-use App\Utils;
 use App\Messenger\Message;
+use App\Utils;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 

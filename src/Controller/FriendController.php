@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(name:'friend_', path: '/friend')]
+#[Route(name: 'friend_', path: '/friend')]
 class FriendController
 {
     public function __construct(
@@ -27,7 +27,7 @@ class FriendController
         /** @var User */
         $user = $this->security->getUser();
         $userId = $user->getId();
-        $friendId = $request->attributes->getInt("friend_id");
+        $friendId = $request->attributes->getInt('friend_id');
 
         $userFriend = $this->userFriendUtils->getByUserIdAndFriendId($userId, $friendId);
         if ($userFriend === null) {
@@ -45,8 +45,7 @@ class FriendController
         /** @var User */
         $user = $this->security->getUser();
         $userId = $user->getId();
-        $friendId = $request->attributes->getInt("friend_id");
-
+        $friendId = $request->attributes->getInt('friend_id');
 
         $this->userFriendUtils->deleteByUserIdAndFriendId($userId, $friendId);
 

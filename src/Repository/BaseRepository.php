@@ -47,7 +47,7 @@ abstract class BaseRepository
      */
     protected function isEmptyRawData(false|array $rawData): bool
     {
-        return ($rawData === false);
+        return $rawData === false;
     }
 
     protected function getConnection(bool $isMaster = false): Connection

@@ -22,8 +22,8 @@ class ErrorController
         $httpCode = $e->getStatusCode();
 
         return match ($httpCode) {
-            Response::HTTP_BAD_REQUEST => $this->renderGenericException("Invalid request data", $httpCode),
-            Response::HTTP_UNAUTHORIZED => $this->renderGenericException("Unauthorized", httpCode: $httpCode),
+            Response::HTTP_BAD_REQUEST => $this->renderGenericException('Invalid request data', $httpCode),
+            Response::HTTP_UNAUTHORIZED => $this->renderGenericException('Unauthorized', httpCode: $httpCode),
             Response::HTTP_INTERNAL_SERVER_ERROR => $this->renderGenericException($e->getMessage(), $e->getCode(), 'TODO', $httpCode),
             default => $this->renderGenericException('')
         };

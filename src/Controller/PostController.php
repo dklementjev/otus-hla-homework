@@ -32,7 +32,7 @@ class PostController extends BaseController
 
     #[Route(name: 'create', path: '/create', methods: ['POST'])]
     public function createAction(
-        #[MapRequestPayload(acceptFormat:'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] DTO\Post\CreatePost $requestDto
+        #[MapRequestPayload(acceptFormat: 'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] DTO\Post\CreatePost $requestDto
     ): Response {
         /** @var User */
         $user = $this->security->getUser();
@@ -66,7 +66,7 @@ class PostController extends BaseController
 
     #[Route(name: 'update', path: '/update', methods: ['PUT'])]
     public function updateAction(
-        #[MapRequestPayload(acceptFormat:'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] DTO\Post\UpdatePost $requestDto
+        #[MapRequestPayload(acceptFormat: 'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] DTO\Post\UpdatePost $requestDto
     ): Response {
         $post = $this->postUtils->getByUUID($requestDto->uuid);
         if ($post === null) {
