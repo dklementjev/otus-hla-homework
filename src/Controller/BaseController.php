@@ -14,10 +14,7 @@ abstract class BaseController
     }
 
     /**
-     * @param $data
      * @param string|string[] $groupNames
-     *
-     * @return string
      */
     protected function jsonSerialize(
         $data,

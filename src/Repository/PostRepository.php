@@ -67,7 +67,7 @@ SQL;
                 'uuid' => (string) $model->getUUID(),
                 'user_id' => $model->getUserId(),
                 'text' => $model->getText(),
-                'created_at' => (new \DateTimeImmutable("now", new \DateTimeZone("UTC")))->format("c"),
+                'created_at' => (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('c'),
             ]
         );
 
@@ -105,7 +105,7 @@ SQL;
             ]
         );
 
-        return ($rowCount > 0);
+        return $rowCount > 0;
     }
 
     /**

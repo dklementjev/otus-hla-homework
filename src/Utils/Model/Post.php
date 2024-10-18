@@ -78,7 +78,7 @@ class Post
         return $this->feedCache->get(
             $cacheKey,
             function (ItemInterface $item) use ($cacheLifetime, $postRepository, $userId) {
-                //TODO: lock ?
+                // TODO: lock ?
                 $posts = $postRepository->findFeedPostsForUser($userId);
                 $item->expiresAfter($cacheLifetime);
 
@@ -105,7 +105,7 @@ class Post
     {
         $bits = [
             $this->getCacheKeyPrefix(),
-            ...$suffixBits
+            ...$suffixBits,
         ];
 
         return join('__', $bits);

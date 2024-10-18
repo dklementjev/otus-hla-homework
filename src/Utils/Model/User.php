@@ -18,15 +18,15 @@ class User
     public function register(
         DTO\User\RegisterRequest $dto
     ): ?Model\User {
-
         $res = $this->userRepository->create();
         $res->setFirstName($dto->first_name)
             ->setLastName($dto->second_name)
-            ->setBirthdate(new \DateTimeImmutable($dto->birthdate, new \DateTimeZone("UTC")))
+            ->setBirthdate(new \DateTimeImmutable($dto->birthdate, new \DateTimeZone('UTC')))
             ->setBio($dto->biography)
             ->setCity($dto->city)
             ->setPasswordHash($this->passwordHasher->hashPassword($res, $dto->password))
         ;
+
         return $this->userRepository->insert($res);
     }
 

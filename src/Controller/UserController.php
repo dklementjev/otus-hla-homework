@@ -28,7 +28,7 @@ class UserController extends BaseController
 
     #[Route(path: '/register', methods: ['POST'], name: 'register')]
     public function register(
-        #[MapRequestPayload(acceptFormat:'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] DTO\User\RegisterRequest $requestDto
+        #[MapRequestPayload(acceptFormat: 'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] DTO\User\RegisterRequest $requestDto
     ): Response {
         $user = $this->userUtils->register($requestDto);
 
@@ -44,7 +44,7 @@ class UserController extends BaseController
     {
         $user = $this->userUtils->getById($id);
         if (empty($user)) {
-            throw new NotFoundHttpException("User not found");
+            throw new NotFoundHttpException('User not found');
         }
 
         return new JsonResponse(
@@ -56,11 +56,11 @@ class UserController extends BaseController
     #[Route(path: '/search', methods: ['GET'], name: 'search')]
     public function search(Request $request): Response
     {
-        $firstName = $request->query->get("first_name");
-        $lastName = $request->query->get("last_name");
+        $firstName = $request->query->get('first_name');
+        $lastName = $request->query->get('last_name');
 
         if (empty($firstName) || empty($lastName)) {
-            throw new BadRequestHttpException("Either first or last name is empty");
+            throw new BadRequestHttpException('Either first or last name is empty');
         }
         $users = $this->userUtils->findByNamePrefix($firstName, $lastName);
 

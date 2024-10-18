@@ -46,7 +46,7 @@ class AccessTokenRepository extends BaseRepository
             $sql,
             [
                 'user_id' => $accessToken->getUserId(),
-                'token' => $accessToken->getRawToken()
+                'token' => $accessToken->getRawToken(),
             ]
         );
         /** @var int|null */
