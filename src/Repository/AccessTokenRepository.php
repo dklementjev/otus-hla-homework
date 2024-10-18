@@ -10,6 +10,7 @@ use Ramsey\Uuid;
  *
  * @template-extends BaseRepository<RawAccessToken, AccessToken>
  */
+#[ModelClass(AccessToken::class)]
 class AccessTokenRepository extends BaseRepository
 {
     public function create(): AccessToken

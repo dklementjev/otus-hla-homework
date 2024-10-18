@@ -13,8 +13,11 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
+    _instanceof:
+        App\Repository\BaseRepository:
+            tags:
+                - app.mapped-repository
+
     App\:
         resource: '../src/'
         exclude:
@@ -32,8 +35,11 @@ services:
         tags:
             - 'controller.service_arguments'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    Doctrine\DBAL\Connection $dbConnection: "@doctrine.dbal.default_connection"
+    Doctrine\DBAL\Connection $slaveConnection: "@doctrine.dbal.slave_connection"
+
+    Doctrine\DBAL\Connection $dbDialogConnection: "@doctrine.dbal.dialog_connection"
+    Doctrine\DBAL\Connection $slaveDialogConnection: "@doctrine.dbal.dialog_connection"
 
     Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface:
         class: Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory

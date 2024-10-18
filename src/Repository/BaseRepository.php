@@ -54,4 +54,19 @@ abstract class BaseRepository
     {
         return $isMaster ? $this->rwConnection : $this->roConnection;
     }
+
+    protected function beginTransaction(bool $isMaster = false): bool
+    {
+        return $this->getConnection($isMaster)->beginTransaction();
+    }
+
+    protected function commitTransaction(bool $isMaster = false): bool
+    {
+        return $this->getConnection($isMaster)->commit();
+    }
+
+    protected function rollbackTransaction(bool $isMaster = false): bool
+    {
+        return $this->getConnection($isMaster)->rollBack();
+    }
 }

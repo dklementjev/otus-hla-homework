@@ -13,6 +13,7 @@ use Ramsey\Uuid\UuidInterface;
  *
  * @template-extends BaseRepository<RawPost, Post>
  */
+#[ModelClass(Post::class)]
 class PostRepository extends BaseRepository
 {
     public function create(int $userId): Post
