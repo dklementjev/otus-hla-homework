@@ -49,9 +49,9 @@ class AuthController extends BaseController
             ->setUserId($user->getId())
         ;
         $this->accessTokenRepository->insert($accessToken);
-        
+
         return new JsonResponse(
-            $this->jsonSerialize(['token'=>$accessToken->getRawToken()], []),
+            $this->jsonSerialize(['token' => $accessToken->getRawToken()], []),
             json: true
         );
     }

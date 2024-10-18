@@ -99,7 +99,7 @@ SQL;
     public function pickRandomUserIds(int $count): array
     {
         $rowCount = $this->getRowCount();
-        $percent = ceil(max(0.01, $count/$rowCount*100));
+        $percent = ceil(max(0.01, $count / $rowCount * 100));
         $sql = <<<'SQL'
         SELECT id FROM app_users TABLESAMPLE BERNOULLI(:percent) LIMIT :max_items
 SQL;

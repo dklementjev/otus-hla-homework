@@ -2,4 +2,6 @@
 
 namespace App\Model;
 
-interface ModelInterface {}
+interface ModelInterface
+{
+}

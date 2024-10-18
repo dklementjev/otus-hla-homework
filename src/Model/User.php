@@ -34,7 +34,8 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface, ModelIn
         #[Groups(['register_view'])]
         #[SerializedName('id')]
         protected readonly ?int $id = null
-    ) {}
+    ) {
+    }
 
     public function getId(): ?int
     {
