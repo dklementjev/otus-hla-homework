@@ -4,7 +4,10 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ $default-branch ]
-    
+
+permissions:
+  contents: read
+
 jobs:
   php:
     name: "Run PHP linters"
