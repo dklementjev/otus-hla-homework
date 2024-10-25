@@ -10,7 +10,7 @@ abstract class ForeignMigration extends ContainerAwareMigration
 {
     protected function addSql(string $sql, array $params = [], array $types = []): void
     {
-        throw new \LogicException("Default addSql is prohibited here");
+        throw new \LogicException('Default addSql is prohibited here');
     }
 
     protected function getConnection(): Connection
@@ -18,7 +18,7 @@ abstract class ForeignMigration extends ContainerAwareMigration
         $rc = new \ReflectionClass($this);
         $attr = $rc->getAttributes(UseConnection::class);
         if (empty($attr)) {
-            throw new \LogicException("UseConnection attribute is missing");
+            throw new \LogicException('UseConnection attribute is missing');
         }
         /** @var UseConnection $attrInstance */
         $attrInstance = $attr[0]->newInstance();

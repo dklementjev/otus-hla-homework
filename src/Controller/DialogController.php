@@ -31,7 +31,7 @@ class DialogController extends BaseController
     #[Route(name: 'pm_send', path: '/{other_user_id}/send', methods: ['POST'], requirements: ['other_user_id' => '\d+'])]
     public function sendMessageAction(
         string $other_user_id,
-        #[MapRequestPayload(acceptFormat:'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
+        #[MapRequestPayload(acceptFormat: 'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         CreateMessage $requestDto
     ): Response {
         /** @var User */
@@ -61,7 +61,7 @@ class DialogController extends BaseController
         $dialogMessages = $this->dialogUtils->getRecentMessages($dialog->getId());
 
         return new JsonResponse(
-            $serializer->serialize($dialogMessages, "json"),
+            $serializer->serialize($dialogMessages, 'json'),
             json: true
         );
     }

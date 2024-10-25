@@ -2,8 +2,8 @@
 
 namespace App\Repository;
 
-use App\Model\ModelInterface;
 use App\Model;
+use App\Model\ModelInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Ramsey\Uuid\Uuid;
@@ -92,7 +92,7 @@ SQL;
             [
                 'uuid' => $dialog->getUuid()->toString(),
                 'is_groupchat' => $dialog->isGroupchat(),
-                'created_at' => $dialog->getCreatedAt()->format('c')
+                'created_at' => $dialog->getCreatedAt()->format('c'),
             ],
             [
                 'uuid' => Types::STRING,

@@ -19,7 +19,6 @@ class RepositoryMapper implements RepositoryMapperInterface
     }
 
     /**
-     * @param string $serviceId
      * @param class-string<ModelInterface> $modelClass
      */
     public function add(string $serviceId, string $modelClass)
