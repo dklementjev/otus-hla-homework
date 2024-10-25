@@ -9,6 +9,7 @@ use App\Model\User;
  *
  * @template-extends BaseRepository<RawUser, User>
  */
+#[ModelClass(User::class)]
 class UserRepository extends BaseRepository
 {
     public function create(): User
