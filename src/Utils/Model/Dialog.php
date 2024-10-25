@@ -52,7 +52,6 @@ class Dialog
     }
 
     /**
-     * @param int $dialogId
      * @return DialogMessage[]
      */
     public function getRecentMessages(int $dialogId): array
