@@ -9,6 +9,12 @@
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
 
+        <script>
+            window.apiBaseUrl = "{{ url('home')|raw }}";
+            window.urlconf = {
+                auth_login: "{{ path('auth_login') }}"
+            }
+        </script>
         {% block javascripts %}
             {{ encore_entry_script_tags('bootstrap') }}
             {{ encore_entry_script_tags('app') }}
