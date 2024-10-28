@@ -34,6 +34,13 @@ class Login extends AbstractType
                     'label' => "Log in",
                 ]
             )
+            ->add(
+                'token',
+                TextType::class,
+                [
+                    'disabled' => true,
+                ]
+            )
         ;
     }
 }
