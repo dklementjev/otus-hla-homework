@@ -18,7 +18,9 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "backbone_es6": "^17.1.2",
         "bootstrap": "^5.3.3",
-        "jquery": "^3.7.1"
+        "jquery": "^3.7.1",
+        "underscore": "^1.13.7"
     }
 }
