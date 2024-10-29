@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  php:
-    name: "cs-fixer"
+  linters:
+    name: "Code linters"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,5 +19,5 @@ jobs:
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
           args: --config=.php-cs-fixer.dist.php --diff --dry-run
-
-        
+      - name: ESLint
+        uses: sibiraj-s/action-eslint@v3
