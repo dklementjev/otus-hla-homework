@@ -13,6 +13,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route(name: 'auth_')]
@@ -21,6 +23,7 @@ class AuthController extends BaseController
     public function __construct(
         protected readonly UserRepository $userRepository,
         protected readonly AccessTokenRepository $accessTokenRepository,
+        protected readonly UserProviderInterface $userProvider,
         protected readonly UserPasswordHasherInterface $passwordHasher,
         SerializerInterface $serializer,
         #[Autowire(param: 'controller.default_json_encode_options')]
@@ -35,9 +38,10 @@ class AuthController extends BaseController
         #[MapRequestPayload(acceptFormat: 'json', validationFailedStatusCode: Response::HTTP_BAD_REQUEST)]
         LoginRequest $loginDto
     ): Response {
-        $user = $this->userRepository->getById($loginDto->id);
-        if (!$user) {
-            throw new NotFoundHttpException('User not found');
+        try {
+            $user = $this->userProvider->loadUserByIdentifier($loginDto->id);
+        } catch (UserNotFoundException $e) {
+            throw new NotFoundHttpException('User not found', $e);
         }
         if (!$this->passwordHasher->isPasswordValid($user, $loginDto->password)) {
             throw new HttpException(Response::HTTP_UNAUTHORIZED);
