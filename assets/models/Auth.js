@@ -1,3 +1,4 @@
+import {Backbone} from "backbone_es6";
 
 class Auth {
     /** @var {TokenStorage} */
@@ -15,10 +16,12 @@ class Auth {
 
     load() {
         this._token = this._tokenStorage.read();
+        this.trigger("load");
     }
 
     save() {
         this._tokenStorage.write(this._token || '');
+        this.trigger("save");
     }
 
     get token() {
@@ -26,8 +29,13 @@ class Auth {
     }
 
     set token(token) {
+        if (token!==this._token) {
+            this.trigger("change", {value: token});
+        }
+
         this._token = token;
     }
 }
+Object.assign(Auth.prototype, Backbone.Events);
 
 export {Auth};

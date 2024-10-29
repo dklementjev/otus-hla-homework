@@ -4,6 +4,7 @@ import {Auth} from "./models/Auth";
 import {Form} from "./utils/Form";
 import {Urlconf} from "./utils/Urlconf";
 import {AuthAPI} from "./api/AuthAPI";
+import {Backbone} from "backbone_es6";
 
 class Login {
     /**
@@ -20,15 +21,19 @@ class Login {
 
     initialize() {
         this._auth.load();
-        this._form.getField('token').val(this._auth.token);
     }
 
     setupEvents() {
+        const _runTokenChangeHandler = () => Promise.resolve().then(() => this.tokenChangeHandler());
+        this._auth.on("change", _runTokenChangeHandler);
+        this.on("rendered", _runTokenChangeHandler);
+
         this._form.getEl().on("submit", this.formSubmitHandler.bind(this));
+        this.getSidebarMenu().find("[data-action]").on("click", (e) => this.runMenuAction($(e.target).data("action")))
     }
 
     render() {
-
+        this.trigger("rendered");
     }
 
     formSubmitHandler (e) {
@@ -53,7 +58,45 @@ class Login {
             })
         ;
     }
+
+    runMenuAction (actionName) {
+        switch (actionName) {
+            case "logout":
+                this._auth.token = null;
+                this._auth.save();
+
+                break;
+        }
+    }
+
+    tokenChangeHandler () {
+        this.updateSidebarMenu();
+        this.updateTokenInput();
+    }
+
+    updateTokenInput () {
+        this._form.getField('token').val(this._auth.token);
+    }
+
+    updateSidebarMenu () {
+        const menuEl = this.getSidebarMenu(),
+            isAuthorized = !!this._auth.token
+        ;
+
+        menuEl.find("li").each((_, rawEl) => {
+            const el = $(rawEl),
+                targetStatus = el.data("logged-in").toString()==="1"
+            ;
+
+            el.toggleClass("d-none", targetStatus!==isAuthorized);
+        })
+    }
+
+    getSidebarMenu () {
+        return $("#sidebar-menu");
+    }
 }
+Object.assign(Login.prototype, Backbone.Events);
 
 const container = Container.getInstance()
 

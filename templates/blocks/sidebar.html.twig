@@ -1,9 +1,8 @@
 <div id="sidebar">
-    <ul class="nav flex-column">
-        {% if not is_granted("ROLE_USER") %}
-        <li><a href="{{ url("ui_auth_login") }}">Log in</a></li>
-        {% else %}
-        <li><a href="#TODO">Log out</a></li>
-        {% endif %}
+    <ul id="sidebar-menu" class="nav flex-column">
+        <li data-logged-in="0"><a href="{{ url("ui_auth_login") }}">Log in</a></li>
+        <li data-logged-in="1"><a href="#TODO">Dialogs</a></li>
+        <li data-logged-in="1"><a href="#TODO">Posts</a></li>
+        <li data-logged-in="1"><a href="javascript:void(0)" data-action="logout">Log out</a></li>
     </ul>
 </div>
