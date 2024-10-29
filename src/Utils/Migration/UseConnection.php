@@ -7,6 +7,5 @@ class UseConnection
 {
     public function __construct(
         public readonly string $connection
-    ) {
-    }
+    ) {}
 }

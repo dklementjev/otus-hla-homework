@@ -14,8 +14,7 @@ class Post
 {
     public function __construct(
         protected readonly MessageBusInterface $messageBus
-    ) {
-    }
+    ) {}
 
     #[AsEventListener(event: EventType\Post::Update->value)]
     public function updateHandler(Event\Post $event)

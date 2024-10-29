@@ -18,8 +18,7 @@ class FriendController
     public function __construct(
         protected readonly Security $security,
         protected readonly UserFriend $userFriendUtils,
-    ) {
-    }
+    ) {}
 
     #[Route(name: 'add', path: '/set/{friend_id}', methods: ['PUT'], requirements: ['friend_id' => '\d+'])]
     public function addAction(Request $request): Response

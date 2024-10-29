@@ -16,8 +16,7 @@ class Dialog
         protected readonly DialogUserRepository $dialogUserRepository,
         protected readonly DialogParticipantRepository $dialogParticipantRepository,
         protected readonly DialogMessageRepository $dialogMessageRepository
-    ) {
-    }
+    ) {}
 
     public function getPMForUsers(int $userId, int $otherUserId): ?DialogModel
     {

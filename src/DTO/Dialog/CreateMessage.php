@@ -6,6 +6,5 @@ final class CreateMessage
 {
     public function __construct(
         public readonly string $text
-    ) {
-    }
+    ) {}
 }

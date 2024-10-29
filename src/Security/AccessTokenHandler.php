@@ -12,8 +12,7 @@ class AccessTokenHandler implements AccessTokenHandlerInterface
 {
     public function __construct(
         protected readonly AccessTokenRepository $accessTokenRepository
-    ) {
-    }
+    ) {}
 
     /**
      * @throws AuthenticationException

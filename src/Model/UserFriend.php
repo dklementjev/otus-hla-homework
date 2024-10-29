@@ -7,8 +7,7 @@ class UserFriend implements ModelInterface
     public function __construct(
         protected readonly int $userId,
         protected readonly int $friendId
-    ) {
-    }
+    ) {}
 
     public function getUserId(): int
     {

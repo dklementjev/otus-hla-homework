@@ -8,6 +8,5 @@ final readonly class LoginRequest
         public string $id,
         #[\SensitiveParameter]
         public string $password
-    ) {
-    }
+    ) {}
 }
