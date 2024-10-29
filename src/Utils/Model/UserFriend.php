@@ -9,8 +9,7 @@ class UserFriend
 {
     public function __construct(
         protected readonly UserFriendRepository $userFriendRepository,
-    ) {
-    }
+    ) {}
 
     public function getByUserIdAndFriendId(int $userId, int $friendId): ?UserFriendModel
     {

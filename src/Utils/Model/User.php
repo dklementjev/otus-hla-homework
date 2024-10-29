@@ -12,8 +12,7 @@ class User
     public function __construct(
         protected readonly UserRepository $userRepository,
         protected readonly UserPasswordHasherInterface $passwordHasher
-    ) {
-    }
+    ) {}
 
     public function register(
         DTO\User\RegisterRequest $dto

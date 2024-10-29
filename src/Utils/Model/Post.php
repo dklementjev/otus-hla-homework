@@ -21,8 +21,7 @@ class Post
         protected readonly CacheInterface $feedCache,
         protected readonly int $feedCacheLifetime,
         protected readonly EventDispatcherInterface $eventDispatcher,
-    ) {
-    }
+    ) {}
 
     public function createFromDTO(int $userId, DTO\Post\CreatePost $dto): Model\Post
     {

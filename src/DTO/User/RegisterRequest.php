@@ -21,6 +21,5 @@ final readonly class RegisterRequest
         #[Assert\NotBlank]
         #[Assert\PasswordStrength(minScore: 2)]
         public string $password
-    ) {
-    }
+    ) {}
 }

@@ -10,8 +10,7 @@ class DialogUser implements ModelInterface
         protected readonly ?int $id,
         protected readonly UuidInterface $uuid,
         protected readonly ?string $nickname
-    ) {
-    }
+    ) {}
 
     public function getId(): ?int
     {

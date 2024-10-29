@@ -10,8 +10,7 @@ abstract class BaseController
     public function __construct(
         protected readonly SerializerInterface $serializer,
         protected readonly int $jsonEncodeOptions
-    ) {
-    }
+    ) {}
 
     /**
      * @param string|string[] $groupNames
