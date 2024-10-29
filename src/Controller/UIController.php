@@ -13,7 +13,8 @@ class UIController extends AbstractController
 {
     public function __construct(
         protected readonly Environment $twig,
-    ) {}
+    ) {
+    }
 
     #[Route(name: 'index', path: '/')]
     public function indexAction(): Response
