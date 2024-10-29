@@ -12,7 +12,7 @@ class TokenStorage {
      * @param {string|null} data
      * @return void
      */
-    write(data) {
+    write(data) { // eslint-disable-line no-unused-vars
         throw new Error("Abstract method");
     }
 }

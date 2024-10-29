@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  php:
-    name: "cs-fixer"
+  linters:
+    name: "Code linters"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,4 +20,9 @@ jobs:
         with:
           args: --config=.php-cs-fixer.dist.php --diff --dry-run
 
-        
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: ESLint
+        uses: sibiraj-s/action-eslint@v3
