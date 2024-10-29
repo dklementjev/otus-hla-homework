@@ -17,21 +17,21 @@ class Login extends AbstractType
                 'login',
                 TextType::class,
                 [
-                    'label' => "Username",
+                    'label' => 'Username',
                 ]
             )
             ->add(
                 'password',
                 PasswordType::class,
                 [
-                    'label' => "Password",
+                    'label' => 'Password',
                 ]
             )
             ->add(
                 'submit',
                 SubmitType::class,
                 [
-                    'label' => "Log in",
+                    'label' => 'Log in',
                 ]
             )
             ->add(
