@@ -1,4 +1,5 @@
 import {Backbone} from "backbone_es6";
+import {deferMicrotask} from "../../utils/Utils";
 
 class TokenField extends Backbone.View{
     /**
@@ -10,7 +11,7 @@ class TokenField extends Backbone.View{
     }
 
     setupEvents () {
-        const _runUpdate = () => Promise.resolve().then(() => this.update());
+        const _runUpdate = deferMicrotask(() => this.update());
 
         this.on("rendered", _runUpdate);
         this._auth.on("change", _runUpdate)

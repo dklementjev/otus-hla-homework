@@ -1,4 +1,5 @@
 import {Backbone} from "backbone_es6";
+import {deferMicrotask} from "../utils/Utils";
 
 class SidebarMenu extends Backbone.View {
     /**
@@ -12,7 +13,7 @@ class SidebarMenu extends Backbone.View {
     setupEvents () {
         this.$el.find("[data-action]").on("click", (e) => this.runAction($(e.target).data("action")));
 
-        const _runUpdate = () => Promise.resolve().then(() => this.update())
+        const _runUpdate = deferMicrotask(() => this.update())
         this.on("rendered", _runUpdate)
         this._auth.on("change", _runUpdate)
     }
