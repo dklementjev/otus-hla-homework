@@ -11,5 +11,13 @@ export default [
       }
     }
   },
+  {
+    files: ["apps/socket-server/**/*.js"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      }
+    }
+  },
   pluginJs.configs.recommended,
 ];
