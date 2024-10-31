@@ -2,9 +2,15 @@ require("dotenv").config({path: [".env.local", ".env"]});
 
 const WebSocket = require("ws");
 const Debug= require( "debug");
+const {MessageProcessor} = require("./lib/message-processor");
+const {WebsocketStateMap} = require("./lib/websocket-state");
+const {AuthApi} = require("./lib/auth-api");
 const appDebug = Debug("app");
 const SERVER_PORT = process.env.SERVER_PORT;
 const SERVER_PING_TIMEOUT = process.env.SERVER_PING_TIMEOUT;
+
+const authApi = new AuthApi(process.env.AUTH_API_URL);
+const messageProcessor = new MessageProcessor(new WebsocketStateMap(), authApi);
 
 appDebug(`Listening in port ${SERVER_PORT}`);
 const wss = new WebSocket.WebSocketServer({port: SERVER_PORT})
@@ -22,6 +28,7 @@ wss.on("connection", (ws, req) => {
     });
     ws.on("message", (data) => {
         debug("Message: %s", data);
+        messageProcessor.process(ws, data);
     });
     ws.on("pong", () => {
         debug("Pong");
