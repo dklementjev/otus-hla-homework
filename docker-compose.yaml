@@ -217,8 +217,6 @@ services:
       - rabbitmq-password
     networks:
       - back
-    ports:
-      - "25672:15672"
 
 volumes:
   db-data: ~
