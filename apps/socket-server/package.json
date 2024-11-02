@@ -11,6 +11,7 @@
   "dependencies": {
     "debug": "^4.3.7",
     "dotenv": "^16.4.5",
+    "rabbitmq-client": "^5.0.0",
     "ws": "^8.18.0"
   }
 }

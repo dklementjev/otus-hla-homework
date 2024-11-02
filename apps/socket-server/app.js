@@ -5,12 +5,16 @@ const Debug= require( "debug");
 const {MessageProcessor} = require("./lib/message-processor");
 const {WebsocketStateMap} = require("./lib/websocket-state");
 const {AuthApi} = require("./lib/auth-api");
+const {AmqpConnector} = require("./lib/amqp-connector");
 const appDebug = Debug("app");
 const SERVER_PORT = process.env.SERVER_PORT;
 const SERVER_PING_TIMEOUT = process.env.SERVER_PING_TIMEOUT;
 
 const authApi = new AuthApi(process.env.AUTH_API_URL);
 const messageProcessor = new MessageProcessor(new WebsocketStateMap(), authApi);
+const amqpConnector = new AmqpConnector();
+amqpConnector.connect(process.env.RABBITMQ_HOST, process.env.RABBITMQ_PORT, process.env.RABBITMQ_USER, process.env.RABBITMQ_PASSWORD);
+amqpConnector.subscribe("frontend-events", 1, frontendEventsMessageHandler);
 
 appDebug(`Listening in port ${SERVER_PORT}`);
 const wss = new WebSocket.WebSocketServer({port: SERVER_PORT})
@@ -48,3 +52,10 @@ wss.on("close", () => {
     appDebug("Clearing ping poll");
     clearInterval(hPingInterval);
 })
+function frontendEventsMessageHandler(amqpMessage) {
+    appDebug("amqpMessageHandler: %o", amqpMessage);
+    frontendEventsHandler(amqpMessage.body || {});
+}
+function frontendEventsHandler(message) {
+    appDebug("messageHandler: %o", message);
+}
