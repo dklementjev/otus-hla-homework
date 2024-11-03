@@ -217,6 +217,23 @@ services:
     networks:
       - back
 
+  node:
+    image: bitnami/node:22
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    volumes:
+      - ./apps/socket-server:/app
+    networks:
+      - back
+    user: "www-data"
+    command: ["node", "./app.js"]
+    working_dir: "/app"
+
 volumes:
   db-data: ~
   db-data-slave1: ~
