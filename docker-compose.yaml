@@ -48,7 +48,6 @@ services:
       - ./:/app
       - ./services/php-fpm/cli.ini:/opt/bitnami/php/etc/conf.d/php.ini
     networks:
-      - front
       - back
 
   db:
