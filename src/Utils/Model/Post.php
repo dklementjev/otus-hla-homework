@@ -7,10 +7,13 @@ namespace App\Utils\Model;
 use App\DTO;
 use App\EventDispatcher\Event;
 use App\EventDispatcher\EventType;
+use App\Messenger\Message\UserNotification;
 use App\Model;
 use App\Repository\PostRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -21,6 +24,7 @@ class Post
         protected readonly CacheInterface $feedCache,
         protected readonly int $feedCacheLifetime,
         protected readonly EventDispatcherInterface $eventDispatcher,
+        protected readonly MessageBusInterface $messageBus
     ) {}
 
     public function createFromDTO(int $userId, DTO\Post\CreatePost $dto): Model\Post
@@ -57,7 +61,12 @@ class Post
         $res = $this->postRepository->insert($post);
 
         $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Insert->value);
-
+        $this->messageBus->dispatch(
+            new UserNotification($res->getUserId(), 'added', ['id' => $res->getId()]),
+            [
+                new AmqpStamp('user_notification.post.'.$res->getUserId())
+            ]
+        );
         return $res;
     }
 
