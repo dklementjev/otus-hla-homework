@@ -64,9 +64,10 @@ class Post
         $this->messageBus->dispatch(
             new UserNotification($res->getUserId(), 'added', ['id' => $res->getId()]),
             [
-                new AmqpStamp('user_notification.post.'.$res->getUserId())
+                new AmqpStamp('user_notification.post.'.$res->getUserId()),
             ]
         );
+
         return $res;
     }
 

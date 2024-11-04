@@ -5,7 +5,7 @@ namespace App\Messenger\Message;
 readonly class UserNotification
 {
     public function __construct(
-        protected int    $userId,
+        protected int $userId,
         protected string $command,
         protected ?array $data
     ) {}
