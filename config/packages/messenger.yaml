@@ -8,10 +8,12 @@ framework:
             async: '%env(MESSENGER_TRANSPORT_DSN)%'
             # failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
+            user_notification: '%env(MESSENGER_TRANSPORT_USER_NOTIFICATION)%?exchange[name]=user_notification&exchange[type]=topic'
 
         routing:
-            App\Messenger\Handler\FriendFeedsUpdate: async
+            App\Messenger\Message\FriendFeedsUpdate: async
             App\Messenger\Message\FeedCacheInvalidate: async
+            App\Messenger\Message\UserNotification: user_notification
 
 # when@test:
 #    framework:
