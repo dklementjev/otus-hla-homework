@@ -25,7 +25,7 @@ final readonly class PostBroadcast
             $this->messageBus->dispatch(
                 new UserNotification($message->getUserId(), 'added', ['id' => $message->getPostId()]),
                 [
-                    new AmqpStamp('user_notification.post.' . $friendId),
+                    new AmqpStamp('user_notification.post.'.$friendId),
                 ]
             );
         }
