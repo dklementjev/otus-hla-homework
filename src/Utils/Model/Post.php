@@ -7,7 +7,6 @@ namespace App\Utils\Model;
 use App\DTO;
 use App\EventDispatcher\Event;
 use App\EventDispatcher\EventType;
-use App\Messenger\Message\UserNotification;
 use App\Model;
 use App\Repository\PostRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -61,12 +60,6 @@ class Post
         $res = $this->postRepository->insert($post);
 
         $this->eventDispatcher->dispatch(new Event\Post($res), EventType\Post::Insert->value);
-        $this->messageBus->dispatch(
-            new UserNotification($res->getUserId(), 'added', ['id' => $res->getId()]),
-            [
-                new AmqpStamp('user_notification.post.'.$res->getUserId()),
-            ]
-        );
 
         return $res;
     }
