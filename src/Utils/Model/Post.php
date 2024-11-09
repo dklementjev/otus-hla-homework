@@ -11,6 +11,7 @@ use App\Model;
 use App\Repository\PostRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -21,6 +22,7 @@ class Post
         protected readonly CacheInterface $feedCache,
         protected readonly int $feedCacheLifetime,
         protected readonly EventDispatcherInterface $eventDispatcher,
+        protected readonly MessageBusInterface $messageBus
     ) {}
 
     public function createFromDTO(int $userId, DTO\Post\CreatePost $dto): Model\Post
