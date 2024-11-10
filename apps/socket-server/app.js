@@ -9,12 +9,32 @@ const {AmqpConnector} = require("./lib/amqp-connector");
 const appDebug = Debug("app");
 const SERVER_PORT = process.env.SERVER_PORT;
 const SERVER_PING_TIMEOUT = process.env.SERVER_PING_TIMEOUT;
+const AMQP_EXCHANGE_NAME = process.env.AMQP_EXCHANGE_NAME;
 
 const authApi = new AuthApi(process.env.AUTH_API_URL);
 const messageProcessor = new MessageProcessor(new WebsocketStateMap(), authApi);
 const amqpConnector = new AmqpConnector();
 amqpConnector.connect(process.env.RABBITMQ_HOST, process.env.RABBITMQ_PORT, process.env.RABBITMQ_USER, process.env.RABBITMQ_PASSWORD);
-amqpConnector.subscribe("frontend-events", 1, frontendEventsMessageHandler);
+
+messageProcessor.on("login", (eventData) => {
+    const ws = eventData.websocket;
+    const subscriptionTopic = `user_notification.*.${eventData.userId}`;
+    const queueName = `user_notifications.${eventData.userId}`;
+
+    ws.consumer = amqpConnector.subscribeToTopic(AMQP_EXCHANGE_NAME, subscriptionTopic, queueName, 1, (message) => {
+        appDebug("amqp message received: %o", message);
+
+        const messageBody = message.body || {};
+        const commandName = messageBody.command || null;
+        const commandData = messageBody.data || {};
+
+        ws.send(JSON.stringify({command: commandName, data: commandData}));
+    });
+});
+messageProcessor.on("logout", (eventData) => {
+    const ws = eventData.websocket;
+    ws.consumer.close();
+});
 
 appDebug(`Listening in port ${SERVER_PORT}`);
 const wss = new WebSocket.WebSocketServer({port: SERVER_PORT})
@@ -37,7 +57,7 @@ wss.on("connection", (ws, req) => {
     ws.on("pong", () => {
         debug("Pong");
         ws.isAlive = true;
-    })
+    });
 });
 appDebug("Setting ping poll for %s", SERVER_PING_TIMEOUT);
 const hPingInterval = setInterval(function ping() {
@@ -52,10 +72,3 @@ wss.on("close", () => {
     appDebug("Clearing ping poll");
     clearInterval(hPingInterval);
 })
-function frontendEventsMessageHandler(amqpMessage) {
-    appDebug("amqpMessageHandler: %o", amqpMessage);
-    frontendEventsHandler(amqpMessage.body || {});
-}
-function frontendEventsHandler(message) {
-    appDebug("messageHandler: %o", message);
-}

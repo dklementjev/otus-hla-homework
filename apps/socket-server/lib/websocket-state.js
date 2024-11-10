@@ -5,22 +5,28 @@ class WebsocketState {
     /** @var {boolean} */
     _isAuthenticated = false;
 
+    /** @var {String|null} */
+    _userId = null;
+
     constructor() {}
 
     /**
      * @param {String|null} token
+     * @param {String|null} userId
      */
-    login (token) {
+    login (token, userId) {
         if (token && this._isAuthenticated && this._token !== token) {
             throw new Error("Already authenticated");
         }
         this._isAuthenticated = !!token;
         this._token = token;
+        this._userId = token && userId || null;
     }
 
     logout () {
         this._isAuthenticated = false;
         this._token = null;
+        this._userId = null;
     }
 
     get token () {
@@ -29,6 +35,10 @@ class WebsocketState {
 
     get isAuthenticated () {
         return this._isAuthenticated;
+    }
+
+    get userId () {
+        return this._userId;
     }
 }
 

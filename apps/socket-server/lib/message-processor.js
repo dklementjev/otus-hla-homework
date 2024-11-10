@@ -1,11 +1,13 @@
 const debug = require("debug")("message-processor");
+const {EventEmitter} = require("events");
 
-class MessageProcessor {
+class MessageProcessor extends EventEmitter {
     /**
      * @param {WebsocketStateMap} wsStateMap
      * @param {AuthApi} authApi
      */
     constructor(wsStateMap, authApi) {
+        super();
         this.wsStateMap = wsStateMap;
         this.authApi = authApi;
     }
@@ -24,7 +26,9 @@ class MessageProcessor {
                 debug("Got userId %s", userId);
 
                 const state = this.wsStateMap.add(ws);
-                state.login(token);
+                state.login(token, userId);
+
+                this.emit("login", {websocket: ws, userId: userId});
             })
         ;
     }
@@ -34,7 +38,12 @@ class MessageProcessor {
      */
     processLogoutCommand(ws) {
         const state = this.wsStateMap.get(ws);
-        state && state.logout();
+
+        if (state) {
+            const userId = state.userId;
+            this.emit("logout", {websocket: ws, userId: userId});
+            state.logout();
+        }
 
         return null;
     }
