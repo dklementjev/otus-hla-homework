@@ -11,6 +11,7 @@ services:
       - "8443:443"
     networks:
       - front
+      - back
     mem_reservation: 128M
     mem_limit: 512M
 
@@ -49,6 +50,11 @@ services:
       - ./services/php-fpm/cli.ini:/opt/bitnami/php/etc/conf.d/php.ini
     networks:
       - back
+    depends_on:
+      redis-queue:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
   db:
     image: bitnami/postgresql:16.3.0
@@ -152,6 +158,12 @@ services:
     cpus: 1
     mem_reservation: 128M
     mem_limit: 128M
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   citus-master:
     container_name: citus_master
@@ -216,6 +228,12 @@ services:
       - rabbitmq-password
     networks:
       - back
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   node:
     image: bitnami/node:22
@@ -233,6 +251,9 @@ services:
     user: "www-data"
     command: ["node", "./app.js"]
     working_dir: "/app"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   db-data: ~
