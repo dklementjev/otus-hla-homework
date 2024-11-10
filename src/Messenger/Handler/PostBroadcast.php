@@ -23,9 +23,9 @@ final readonly class PostBroadcast
 
         foreach ($userIds as $friendId) {
             $this->messageBus->dispatch(
-                new UserNotification($message->getUserId(), 'added', ['id' => $message->getPostId()]),
+                new UserNotification($message->getUserId(), 'post.added', ['id' => $message->getPostId()]),
                 [
-                    new AmqpStamp('user_notification.post.'.$friendId),
+                    new AmqpStamp('user_notification.post.' . $friendId),
                 ]
             );
         }
