@@ -1,10 +1,9 @@
 const debug = require("debug")("amqp-consumer");
-const {Connection} = require("rabbitmq-client");
+const {Connection, Consumer} = require("rabbitmq-client");
 
 class AmqpConnector {
     constructor () {
         this.connection = null;
-        this.consumer = null;
     }
 
     /**
@@ -30,17 +29,16 @@ class AmqpConnector {
      * @param {String} queueName
      * @param {Number} prefetch
      * @param {Function} callback
+     *
+     * @returns {Consumer}
      */
     subscribe (queueName, prefetch, callback) {
         debug("subscribe");
         if (!this.connection) {
             throw new Error("Connection is not established");
         }
-        if (this.consumer) {
-            throw new Error("Already subscribed");
-        }
 
-        this.consumer = this.connection.createConsumer(
+        const consumer = this.connection.createConsumer(
             {
                 queue: queueName,
                 qos: {prefetchCount: prefetch || 1}
@@ -48,7 +46,39 @@ class AmqpConnector {
             callback
         );
 
-        this.setupConsumerEvents()
+        this.setupConsumerEvents(consumer);
+
+        return consumer;
+    }
+
+    /**
+     * @param {String} exchangeName
+     * @param {String} topic
+     * @param {String} queueName
+     * @param {Number} prefetch
+     * @param callback
+     *
+     * @returns {Consumer}
+     */
+    subscribeToTopic (exchangeName, topic, queueName, prefetch, callback) {
+        debug("subscribeToTopic %s, %s, %s, %s", exchangeName, topic, queueName, prefetch);
+        if (!this.connection) {
+            throw new Error("Connection is not established");
+        }
+
+        const consumer = this.connection.createConsumer(
+            {
+                queue: queueName,
+                qos: {prefetchCount: prefetch || 1},
+                queueBindings: [{exchange: exchangeName, routingKey: topic}],
+                queueOptions: {autoDelete: true}
+            },
+            callback
+        );
+
+        this.setupConsumerEvents(consumer);
+
+        return consumer;
     }
 
     /**
@@ -67,10 +97,6 @@ class AmqpConnector {
         const terminationHandler = async (signal) => {
             debug("Terminating on %s", signal);
 
-            if (this.consumer) {
-                debug("consumer.close");
-                await this.consumer.close();
-            }
             if (this.connection && this.connection.ready) {
                 debug("connection.close");
                 await this.connection.close();
@@ -85,9 +111,10 @@ class AmqpConnector {
 
     /**
      * @private
+     * @param {Consumer} consumer
      */
-    setupConsumerEvents() {
-        this.consumer.on(
+    setupConsumerEvents(consumer) {
+        consumer.on(
             "error",
             (err) => debug("Consumer error %o", err)
         );
