@@ -1,5 +1,6 @@
 const debug = require("debug")("message-processor");
 const {EventEmitter} = require("events");
+const os = require("os");
 
 class MessageProcessor extends EventEmitter {
     /**
@@ -54,7 +55,7 @@ class MessageProcessor extends EventEmitter {
     processStatusCommand(ws) {
         const state = this.wsStateMap.add(ws);
 
-        return {isAuthenticated: state.isAuthenticated};
+        return {isAuthenticated: state.isAuthenticated, host: os.hostname()};
     }
 
     /**
