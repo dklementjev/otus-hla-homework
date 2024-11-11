@@ -235,7 +235,7 @@ services:
       retries: 3
       start_period: 5s
 
-  node:
+  ws-server-backend:
     image: bitnami/node:22
     deploy:
       resources:
@@ -247,13 +247,26 @@ services:
     volumes:
       - ./apps/socket-server:/app
     networks:
-      - back
+      - traefik
     user: "www-data"
     command: ["node", "./app.js"]
     working_dir: "/app"
     depends_on:
       rabbitmq:
         condition: service_healthy
+    labels:
+      - traefik.http.routers.ws.rule=PathPrefix(`/`)
+      - traefik.enable=1
+
+  traefik:
+    image: traefik:3.2
+    volumes:
+      - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik
+    ports:
+      - "9002:9002"
 
 volumes:
   db-data: ~
@@ -266,6 +279,7 @@ networks:
   back: ~
   db: ~
   db-citus: ~
+  traefik: ~
 
 secrets:
   postgresql-password:
