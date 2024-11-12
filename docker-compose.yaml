@@ -247,7 +247,7 @@ services:
     volumes:
       - ./apps/socket-server:/app
     networks:
-      - traefik
+      - back
     user: "www-data"
     command: ["node", "./app.js"]
     working_dir: "/app"
@@ -264,7 +264,7 @@ services:
       - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - traefik
+      - back
     ports:
       - "9002:9002"
 
@@ -279,7 +279,6 @@ networks:
   back: ~
   db: ~
   db-citus: ~
-  traefik: ~
 
 secrets:
   postgresql-password:
