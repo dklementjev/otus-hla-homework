@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const debug = require("debug")("amqp-consumer");
 const {Connection, Consumer} = require("rabbitmq-client");
 
@@ -25,52 +26,48 @@ class AmqpConnector {
         this.setupConnectionEvents();
     }
 
-    /**
-     * @param {String} queueName
-     * @param {Number} prefetch
-     * @param {Function} callback
-     *
-     * @returns {Consumer}
-     */
-    subscribe (queueName, prefetch, callback) {
-        debug("subscribe");
-        if (!this.connection) {
-            throw new Error("Connection is not established");
-        }
-
-        const consumer = this.connection.createConsumer(
-            {
-                queue: queueName,
-                qos: {prefetchCount: prefetch || 1}
-            },
-            callback
-        );
-
-        this.setupConsumerEvents(consumer);
-
-        return consumer;
+    async ensureTopicExchangeExists(exchangeName) {
+        return this.connection.exchangeDeclare({
+            autoDelete: true,
+            durable: false,
+            exchange: exchangeName,
+            type: "topic",
+        });
     }
 
     /**
      * @param {String} exchangeName
      * @param {String} topic
-     * @param {String} queueName
+     * @param {String} fanoutExchangeName
      * @param {Number} prefetch
      * @param callback
      *
      * @returns {Consumer}
      */
-    subscribeToTopic (exchangeName, topic, queueName, prefetch, callback) {
-        debug("subscribeToTopic %s, %s, %s, %s", exchangeName, topic, queueName, prefetch);
+    async subscribeToTopic (exchangeName, topic, fanoutExchangeName, prefetch, callback) {
+        debug("subscribeToTopic %s, %s, %s, %s", exchangeName, topic, fanoutExchangeName, prefetch);
         if (!this.connection) {
             throw new Error("Connection is not established");
         }
 
+        await this.connection.exchangeDeclare({
+            autoDelete: true,
+            durable: false,
+            exchange: fanoutExchangeName,
+            type: "fanout",
+        });
+        await this.connection.exchangeBind({
+            source: exchangeName,
+            routingKey: topic,
+            destination: fanoutExchangeName
+        });
+
+        const queueName = [fanoutExchangeName, crypto.randomUUID()].join(".");
         const consumer = this.connection.createConsumer(
             {
                 queue: queueName,
                 qos: {prefetchCount: prefetch || 1},
-                queueBindings: [{exchange: exchangeName, routingKey: topic}],
+                queueBindings: [{exchange: fanoutExchangeName}],
                 queueOptions: {autoDelete: true}
             },
             callback

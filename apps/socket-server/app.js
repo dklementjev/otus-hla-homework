@@ -16,12 +16,13 @@ const messageProcessor = new MessageProcessor(new WebsocketStateMap(), authApi);
 const amqpConnector = new AmqpConnector();
 amqpConnector.connect(process.env.RABBITMQ_HOST, process.env.RABBITMQ_PORT, process.env.RABBITMQ_USER, process.env.RABBITMQ_PASSWORD);
 
-messageProcessor.on("login", (eventData) => {
+messageProcessor.on("login", async (eventData) => {
     const ws = eventData.websocket;
     const subscriptionTopic = `user_notification.*.${eventData.userId}`;
-    const queueName = `user_notifications.${eventData.userId}`;
+    const fanoutExchangeName = `user_notifications.${eventData.userId}.fanout`;
 
-    ws.consumer = amqpConnector.subscribeToTopic(AMQP_EXCHANGE_NAME, subscriptionTopic, queueName, 1, (message) => {
+    await amqpConnector.ensureTopicExchangeExists(AMQP_EXCHANGE_NAME);
+    ws.consumer = await amqpConnector.subscribeToTopic(AMQP_EXCHANGE_NAME, subscriptionTopic, fanoutExchangeName, 1, (message) => {
         appDebug("amqp message received: %o", message);
 
         const messageBody = message.body || {};
@@ -31,9 +32,11 @@ messageProcessor.on("login", (eventData) => {
         ws.send(JSON.stringify({command: commandName, data: commandData}));
     });
 });
-messageProcessor.on("logout", (eventData) => {
+messageProcessor.on("logout", async (eventData) => {
     const ws = eventData.websocket;
-    ws.consumer.close();
+    if (ws.consumer) {
+        ws.consumer.close();
+    }
 });
 
 appDebug(`Listening in port ${SERVER_PORT}`);
@@ -46,6 +49,10 @@ wss.on("connection", (ws, req) => {
     ws.isAlive = true;
     ws.on("close", () => {
         debug("Disconnected");
+        ws.isAlive = false;
+        if (ws.consumer) {
+            ws.consumer.close();
+        }
     })
     ws.on("error", (eventData) => {
         debug("Error: %o", eventData)
