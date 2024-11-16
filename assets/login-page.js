@@ -8,7 +8,7 @@ import {Backbone} from "backbone_es6";
 import {SidebarMenu} from "./views/SidebarMenu";
 import {TokenField} from "./views/login/TokenField";
 
-class Login {
+class LoginPage {
     /**
      * @param {AuthAPI} authAPI
      * @param {Auth} auth
@@ -77,7 +77,7 @@ class Login {
         }
     }
 }
-Object.assign(Login.prototype, Backbone.Events);
+Object.assign(LoginPage.prototype, Backbone.Events);
 
 const container = Container.getInstance()
 
@@ -99,8 +99,10 @@ container.set(
     () => new AuthAPI(container.get('urlconf'))
 );
 
-const loginPage = new Login(
+const loginPage = new LoginPage(
     container.get('api.auth'),
     container.get('auth')
 );
 loginPage.render();
+
+export {LoginPage};
