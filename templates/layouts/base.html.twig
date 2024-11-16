@@ -12,7 +12,8 @@
         <script>
             window.apiBaseUrl = "{{ url('home')|raw }}";
             window.urlconf = {
-                auth_login: "{{ path('auth_login') }}"
+                auth_login: "{{ path('auth_login') }}",
+                post_feed: "{{ path('post_feed') }}"
             }
         </script>
         {% block javascripts %}

@@ -8,6 +8,7 @@ import {Auth} from "./models/Auth";
 import {AuthAPI} from "./api/AuthAPI";
 import {PostsPage} from "./posts-page";
 import {SidebarBlock} from "./sidebar";
+import {PostsAPI} from "./api/PostsAPI";
 
 /**
  * @param {Container} container
@@ -29,16 +30,22 @@ function setupCore(container) {
         'api.auth',
         () => new AuthAPI(container.get('urlconf'))
     );
+    container.set(
+        'api.posts',
+        () => new PostsAPI(container.get('urlconf'), container.get('auth'))
+    );
 }
 
 class App {
     /**
      * @param {Auth} auth
      * @param {AuthAPI} authAPI
+     * @param {PostsAPI} postsAPI
      */
-    constructor(auth, authAPI) {
+    constructor(auth, authAPI, postsAPI) {
         this._auth = auth;
         this._authAPI = authAPI;
+        this._postsAPI = postsAPI;
         this._pageViews = new Map();
         this.setupChildViews();
         this.setupEvents();
@@ -51,6 +58,7 @@ class App {
             $("#login-page")
         );
         this.postsPage = new PostsPage(
+            this._postsAPI,
             $("#posts-page")
         );
 
@@ -109,6 +117,7 @@ setupCore(dic);
 
 const app = new App(
     dic.get("auth"),
-    dic.get('api.auth')
+    dic.get('api.auth'),
+    dic.get('api.posts')
 );
 app.render();
