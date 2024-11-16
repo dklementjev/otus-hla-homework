@@ -1,5 +1,14 @@
 {% extends "layouts/base.html.twig" %}
 
 {% block body %}
-    <h1>👈</h1>
+    <div id="login-page" style="display: none">
+        <h2>Log in</h2>
+        <div class="col-md-4">
+            {{ form_start(login_form) }}
+            {{ form_end(login_form) }}
+        </div>
+    </div>
+    <div id="posts-page" class="col-md-4" style="display: none">
+
+    </div>
 {% endblock body %}

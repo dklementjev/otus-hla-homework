@@ -1,6 +1,5 @@
 import {Form} from "./utils/Form";
 import {Backbone} from "backbone_es6";
-import {SidebarMenu} from "./views/SidebarMenu";
 import {TokenField} from "./views/login/TokenField";
 
 /**
@@ -23,10 +22,6 @@ class LoginPage {
 
     initialize() {
         this._auth.load();
-        this._sidebarMenu = new SidebarMenu({
-            auth: this._auth,
-            el: $("#sidebar-menu")
-        });
         this._tokenField = new TokenField({
             auth: this._auth,
             el: this._form.getField("token")
@@ -36,13 +31,20 @@ class LoginPage {
 
     setupEvents() {
         this._form.getEl().on("submit", this.formSubmitHandler.bind(this));
-        this._sidebarMenu.on("action:run", (eventData) => this.runMenuAction(eventData.name));
     }
 
     render() {
-        this._sidebarMenu.render();
+        this.hide();
         this._tokenField.render();
         this.trigger("rendered");
+    }
+
+    hide() {
+        this._el.hide();
+    }
+
+    show() {
+        this._el.show();
     }
 
     formSubmitHandler (e) {
@@ -66,16 +68,6 @@ class LoginPage {
                 this._auth.save()
             })
         ;
-    }
-
-    runMenuAction (actionName) {
-        switch (actionName) {
-            case "logout":
-                this._auth.token = null;
-                this._auth.save();
-
-                break;
-        }
     }
 }
 Object.assign(LoginPage.prototype, Backbone.Events);
