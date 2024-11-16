@@ -11,10 +11,12 @@ class LoginPage {
     /**
      * @param {AuthAPI} authAPI
      * @param {Auth} auth
+     * @param {jQuery} el
      */
-    constructor(authAPI, auth) {
+    constructor(authAPI, auth, el) {
         this._authAPI = authAPI;
         this._auth = auth;
+        this._el = el;
         this._form = new Form("login");
         this.initialize();
     }

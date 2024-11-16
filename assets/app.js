@@ -27,6 +27,7 @@ container.set(
 
 const loginPage = new LoginPage(
     container.get('api.auth'),
-    container.get('auth')
+    container.get('auth'),
+    $("#login-page")
 );
 loginPage.render();
