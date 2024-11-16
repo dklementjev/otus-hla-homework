@@ -1,13 +1,12 @@
-import {Container} from "./utils/Container";
-import {SessionStorage} from "./models/token-storage/SessionStoage";
-import {Auth} from "./models/Auth";
 import {Form} from "./utils/Form";
-import {Urlconf} from "./utils/Urlconf";
-import {AuthAPI} from "./api/AuthAPI";
 import {Backbone} from "backbone_es6";
 import {SidebarMenu} from "./views/SidebarMenu";
 import {TokenField} from "./views/login/TokenField";
 
+/**
+ * @class
+ * @extends {Backbone.Events}
+ */
 class LoginPage {
     /**
      * @param {AuthAPI} authAPI
@@ -78,31 +77,5 @@ class LoginPage {
     }
 }
 Object.assign(LoginPage.prototype, Backbone.Events);
-
-const container = Container.getInstance()
-
-// TODO: move to common services
-container.set(
-    'urlconf',
-    () => new Urlconf(window.apiBaseUrl, window.urlconf)
-);
-container.set(
-    'token-storage',
-    () => new SessionStorage('authToken')
-);
-container.set(
-    'auth',
-    () => new Auth(container.get('token-storage'))
-);
-container.set(
-    'api.auth',
-    () => new AuthAPI(container.get('urlconf'))
-);
-
-const loginPage = new LoginPage(
-    container.get('api.auth'),
-    container.get('auth')
-);
-loginPage.render();
 
 export {LoginPage};
