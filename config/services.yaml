@@ -35,6 +35,10 @@ services:
         tags:
             - 'controller.service_arguments'
 
+    App\Controller\UIController:
+        arguments:
+            $wsApiBaseUrl: '%env(WS_API_BASE_URL)%'
+
     Doctrine\DBAL\Connection $dbConnection: "@doctrine.dbal.default_connection"
     Doctrine\DBAL\Connection $slaveConnection: "@doctrine.dbal.slave_connection"
 

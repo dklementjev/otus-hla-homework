@@ -5,10 +5,12 @@ import {Post as PostView} from "./views/Post";
 class PostsPage {
     /**
      * @param {PostsAPI} postsAPI
+     * @param {UserNotificationsAPI} notificationsAPI
      * @param {jQuery} el
      */
-    constructor(postsAPI, el) {
+    constructor(postsAPI, notificationsAPI, el) {
         this._postsAPI = postsAPI;
+        this._notificationsAPI = notificationsAPI;
         this._el = el;
         this._collection = new Backbone.Collection();
         this.setupEvents();
@@ -35,6 +37,13 @@ class PostsPage {
     hide () {
         this._el.hide();
         this.trigger("hide");
+    }
+
+    /**
+     * @returns {bool}
+     */
+    isVisible () {
+        return this._el.is(":visible");
     }
 
     hideHandler () {
