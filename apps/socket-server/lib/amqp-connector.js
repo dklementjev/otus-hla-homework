@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const debug = require("debug")("amqp-consumer");
-const {Connection, Consumer} = require("rabbitmq-client");
+const {Connection} = require("rabbitmq-client");
 
 class AmqpConnector {
     constructor () {
