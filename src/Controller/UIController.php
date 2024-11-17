@@ -23,7 +23,7 @@ class UIController extends AbstractController
 
         $data = [
             'login_form' => $loginForm->createView(),
-            'ws_api_base_url' => $this->wsApiBaseUrl
+            'ws_api_base_url' => $this->wsApiBaseUrl,
         ];
 
         return new Response(
