@@ -28,12 +28,12 @@ final readonly class PostBroadcast
                     'post.added',
                     [
                         'postID' => $message->getPostUUID(),
-                        'postText'=>$message->getText(),
-                        'author_user_id'=>$message->getPostUserId(),
+                        'postText' => $message->getText(),
+                        'author_user_id' => $message->getPostUserId(),
                     ]
                 ),
                 [
-                    new AmqpStamp('user_notification.post.' . $friendId),
+                    new AmqpStamp('user_notification.post.'.$friendId),
                 ]
             );
         }

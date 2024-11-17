@@ -7,9 +7,9 @@ use Ramsey\Uuid\UuidInterface;
 final readonly class PostBroadcast
 {
     public function __construct(
-        private int           $postUserId,
+        private int $postUserId,
         private UuidInterface $postUUID,
-        private string        $text
+        private string $text
     ) {}
 
     public function getPostUserId(): int
