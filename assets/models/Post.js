@@ -5,12 +5,14 @@ import {Backbone} from "backbone_es6";
  * @extends {Backbone.Model}
  */
 const Post = Backbone.Model.extend({
-    getUUID: function () {
-        return this.get("uuid");
+    idAttribute: "uuid",
+
+    getId: function () {
+        return this.get("id");
     },
 
-    getAuthorUUID: function () {
-        return this.get("authorUUID");
+    getAuthorId: function () {
+        return this.get("author_user_id");
     },
 
     getText: function () {
