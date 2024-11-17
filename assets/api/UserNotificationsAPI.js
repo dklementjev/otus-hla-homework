@@ -17,7 +17,6 @@ class UserNotificationsAPI {
         this.on("all", (eventName, eventData) => console.log("UserNotificationsAPI", eventName, eventData));
         this.on("ws.message", this.wsMessageHandler, this);
         this.on("message", this.messageHandler, this);
-        this.on("command.receive", this.commandReceiveHandler);
     }
 
     connect () {
@@ -65,10 +64,6 @@ class UserNotificationsAPI {
         } else {
             this.trigger("command.receive", {...eventData});
         }
-    }
-
-    commandReceiveHandler (eventData) {
-        const commandName = eventData.command;
     }
 
     /**
