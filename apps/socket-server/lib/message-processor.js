@@ -58,6 +58,22 @@ class MessageProcessor extends EventEmitter {
         return {isAuthenticated: state.isAuthenticated, host: os.hostname()};
     }
 
+    async _processCommand (ws, command, data) {
+        switch (command) {
+            case "login":
+                return this.processLoginCommand(ws, data);
+
+            case "logout":
+                return this.processLogoutCommand(ws);
+
+            case "status":
+                return this.processStatusCommand(ws);
+
+            default:
+                throw new Error("Unknown command");
+        }
+    }
+
     /**
      * @param {WebSocket} ws
      * @param {String} rawData
@@ -78,29 +94,19 @@ class MessageProcessor extends EventEmitter {
             })
             .then((data) => {
                 const command = data.command || "<empty>";
-                debug("Command: %s", command);
+                const correlationId = data.id || null;
+                debug("Command: %s, id: %s", command, correlationId);
 
-                switch (command) {
-                    case "login":
-                        return this.processLoginCommand(ws, data);
-
-                    case "logout":
-                        return this.processLogoutCommand(ws);
-
-                    case "status":
-                        return this.processStatusCommand(ws);
-
-                    default:
-                        throw new Error("Unknown command");
-                }
-            })
-            .then((res) => {
-                ws.send(JSON.stringify({success: true, msg: null, data: res}));
-                debug("processMessage done");
-            })
-            .catch((errorText) => {
-                ws.send(JSON.stringify({success: false, msg: errorText.toString()}));
-                debug("processMessage failed: %o", errorText);
+                return this._processCommand(ws, command, data)
+                    .then((res) => {
+                        ws.send(JSON.stringify({success: true, id: correlationId, msg: null, data: res}));
+                        debug("processMessage done");
+                    })
+                    .catch((errorText) => {
+                        ws.send(JSON.stringify({success: false, id: correlationId, msg: errorText.toString(), data: null}));
+                        debug("processMessage failed: %o", errorText);
+                    })
+                ;
             })
         ;
     }
