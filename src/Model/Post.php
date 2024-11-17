@@ -10,6 +10,8 @@ class Post implements ModelInterface
 {
     public function __construct(
         protected readonly ?int $id,
+        #[Groups(['default_view'])]
+        #[SerializedName('author_user_id')]
         protected readonly int $userId,
         #[Groups(['default_view'])]
         #[SerializedName('id')]

@@ -18,28 +18,15 @@ class UIController extends AbstractController
     #[Route(name: 'index', path: '/')]
     public function indexAction(): Response
     {
-        $data = [];
-
-        return new Response(
-            $this->twig->render(
-                'ui/index.html.twig',
-                $data
-            )
-        );
-    }
-
-    #[Route(name: 'auth_login', path: '/login')]
-    public function loginAction()
-    {
-        $form = $this->createForm(Login::class);
+        $loginForm = $this->createForm(Login::class);
 
         $data = [
-            'form' => $form->createView(),
+            'login_form' => $loginForm->createView(),
         ];
 
         return new Response(
             $this->twig->render(
-                'ui/auth/login.html.twig',
+                'ui/index.html.twig',
                 $data
             )
         );
