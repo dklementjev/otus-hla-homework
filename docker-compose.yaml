@@ -213,6 +213,8 @@ services:
       RABBITMQ_USERNAME: rabbit
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
       RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
+    volumes:
+      - ./services/rabbitmq/enabled-plugins:/opt/bitnami/rabbitmq/etc/rabbitmq/enabled_plugins
     secrets:
       - rabbitmq-password
     networks:
