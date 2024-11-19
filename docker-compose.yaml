@@ -226,6 +226,16 @@ services:
       retries: 3
       start_period: 5s
 
+  traefik:
+    image: traefik:3.2
+    volumes:
+      - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik
+    ports:
+      - "9002:9002"
+
 volumes:
   db-data: ~
   db-data-slave1: ~
@@ -237,6 +247,7 @@ networks:
   back: ~
   db: ~
   db-citus: ~
+  traefik: ~
 
 secrets:
   postgresql-password:
