@@ -219,6 +219,12 @@ services:
       - rabbitmq-password
     networks:
       - back
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
 volumes:
   db-data: ~
