@@ -203,6 +203,29 @@ services:
     networks:
       - db-citus
 
+  rabbitmq:
+    image: bitnami/rabbitmq:4.0
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    environment:
+      RABBITMQ_USERNAME: rabbit
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+      RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
+    volumes:
+      - ./services/rabbitmq/enabled-plugins:/opt/bitnami/rabbitmq/etc/rabbitmq/enabled_plugins
+    secrets:
+      - rabbitmq-password
+    networks:
+      - back
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
 volumes:
   db-data: ~
   db-data-slave1: ~
@@ -226,3 +249,5 @@ secrets:
     file: ./services/redis/cache-password.txt
   redis-queue-password:
     file: ./services/redis/queue-password.txt
+  rabbitmq-password:
+    file: ./services/rabbitmq/password.txt
