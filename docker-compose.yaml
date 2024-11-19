@@ -50,6 +50,11 @@ services:
     networks:
       - front
       - back
+    depends_on:
+      redis-queue:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
   db:
     image: bitnami/postgresql:16.3.0
