@@ -251,6 +251,23 @@ services:
     ports:
       - "9002:9002"
 
+  tarantool:
+    image: tarantool/tarantool:3.2
+    environment:
+      TT_CONFIG: /opt/tarantool/tt.yaml
+      TT_INSTANCE_NAME: instance-01
+    networks:
+      - back
+    volumes:
+      - tarantool-data:/var/lib/tarantool
+      - ./services/tarantool/config:/opt/tarantool
+    healthcheck:
+      test: [ "CMD", "status" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
 volumes:
   db-data: ~
   db-data-slave1: ~
@@ -258,6 +275,7 @@ volumes:
   healthcheck-volume: ~
   citus-master: ~
   citus-worker-1: ~
+  tarantool-data: ~
 
 networks:
   front: ~
