@@ -281,6 +281,7 @@ networks:
   back: ~
   db: ~
   db-citus: ~
+  traefik: ~
 
 secrets:
   postgresql-password:
