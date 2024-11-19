@@ -20,7 +20,7 @@ class DialogController extends BaseController
 {
     public function __construct(
         protected readonly Security $security,
-        protected readonly ModelUtils\Dialog $dialogUtils,
+        protected readonly ModelUtils\DialogInterface $dialogUtils,
         SerializerInterface $serializer,
         #[Autowire(param: 'controller.default_json_encode_options')]
         int $jsonEncodeOptions

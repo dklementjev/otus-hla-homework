@@ -49,6 +49,9 @@ services:
     Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface:
         class: Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher
 
+    App\Utils\Model\DialogInterface:
+        class: App\Utils\Model\Dialog\SQLImplementation
+
     App\Utils\Model\Post:
         arguments:
             $feedCache: "@cache.app.post.feed"

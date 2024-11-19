@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils\Model;
+namespace App\Utils\Model\Dialog;
 
 use App\Model\Dialog as DialogModel;
 use App\Model\DialogMessage;
@@ -8,8 +8,9 @@ use App\Repository\DialogMessageRepository;
 use App\Repository\DialogParticipantRepository;
 use App\Repository\DialogRepository;
 use App\Repository\DialogUserRepository;
+use App\Utils\Model\DialogInterface;
 
-class Dialog
+class SQLImplementation implements DialogInterface
 {
     public function __construct(
         protected readonly DialogRepository $dialogRepository,
