@@ -220,11 +220,21 @@ services:
     networks:
       - back
     healthcheck:
-      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 15s
       timeout: 5s
       retries: 3
       start_period: 5s
+
+  traefik:
+    image: traefik:3.2
+    volumes:
+      - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik
+    ports:
+      - "9002:9002"
 
 volumes:
   db-data: ~
@@ -237,6 +247,7 @@ networks:
   back: ~
   db: ~
   db-citus: ~
+  traefik: ~
 
 secrets:
   postgresql-password:
