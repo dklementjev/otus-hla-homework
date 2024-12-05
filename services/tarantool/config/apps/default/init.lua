@@ -76,17 +76,13 @@ function setupUsersUDFs()
 
   users_mt.getById = function (self, user_id)
     local user
-    local flog = Log.new('UDF: users.getById')
 
-    flog.info("user_id=" .. user_id)
     local users = box.space.users.index.user_id:select(user_id)
     if #users > 0 then
       user = users[1]
     else
-      flog.info("adding user")
       user = box.space.users:insert{user_id, UUID.new(), nil, {}}
     end
-    flog.info(user)
 
     return user
   end
@@ -109,20 +105,14 @@ function setupUsersUDFs()
 
   -- TODO: remove ?
   users_mt.getPMSubscription = function (self, user, other_user)
-    local flog = Log.new("UDF: getPMSubscription")
-
-    flog.info('Running for ' .. user.id .. ', ' .. other_user.id)
-
     for i in ipairs(user:tomap().subscriptions) do
       local subscription = user.subscriptions[i]
 
       if Subscription.isPM(subscription) and Subscription.getOtherUserId(subscription) == other_user.id then
-        flog.info('Subscription found')
         return subscription
       end
     end
 
-    flog.info('Subscription NOT found')
     return nil
   end
 end
@@ -132,18 +122,11 @@ function setupDialogUDFs()
 
   -- TODO: API
   dialogs_mt.getById = function (self, dialog_id)
-    local flog = Log.new('dialogs.getById')
-
-    flog.debug('Running for ' .. dialog_id)
-    dialog = self.index.dialog_id:get(dialog_id)
-    flog.debug(dialog)
-
-    return dialog
+    return self.index.dialog_id:get(dialog_id)
   end
 
   -- TODO: API
   dialogs_mt.create = function (self)
-    local flog = Log.new('dialogs.create')
     local dialog_id = box.sequence.dialog_id_seq:next()
     local now = Datetime.now()
 
@@ -152,25 +135,15 @@ function setupDialogUDFs()
 
   -- TODO: API
   dialogs_mt.getPMForUsers = function (self, user_id, other_user_id)
-    local flog = Log.new('dialogs.getPMForUsers')
-
-    flog.info('Called with ' .. user_id .. ', ' .. other_user_id)
-
     local user = box.space.users:getById(user_id)
     local other_user = box.space.users:getById(other_user_id)
     local pmSubscription = box.space.users:getPMSubscription(user, other_user)
-
-    flog.info(pmSubscription)
 
     return Dialog.toJSON(self:get(pmSubscription.dialog_id))
   end
 
   -- TODO: API
   dialogs_mt.createPMForUsers = function (self, user_id, other_user_id)
-    local flog = Log.new('dialogs.createPMForUsers')
-
-    flog.info('Called with ' .. user_id .. ', ' ..other_user_id)
-
     local participants = {user_id, other_user_id}
     local user = box.space.users:getById(user_id)
     local other_user = box.space.users:getById(other_user_id)
