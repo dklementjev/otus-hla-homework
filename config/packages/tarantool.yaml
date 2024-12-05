@@ -1,0 +1,9 @@
+services:
+  tarantool.client:
+    class: Tarantool\Client\Client
+    factory:  [null, 'fromOptions']
+    arguments:
+      $options:
+        username: "%env(TARANTOOL_USERNAME)%"
+        password: "%env(TARANTOOL_PASSWORD)%"
+        uri: "%env(TARANTOOL_URI)%"
