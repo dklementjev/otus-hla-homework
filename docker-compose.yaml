@@ -254,12 +254,14 @@ services:
   tarantool:
     image: tarantool/tarantool:3.2
     environment:
-      TT_CONFIG: /opt/tarantool/tt.yaml
-      TT_INSTANCE_NAME: instance-01
+     TT_APP_NAME: default
+     TT_APP_DIR: /opt/tarantool/apps
+     TT_INSTANCE_NAME: instance-01
     networks:
       - back
     volumes:
       - tarantool-data:/var/lib/tarantool
+      - ./services/tarantool/docker-entrypoint.sh:/docker-entrypoint.sh
       - ./services/tarantool/config:/opt/tarantool
     healthcheck:
       test: [ "CMD", "status" ]
