@@ -5,10 +5,12 @@ import {Post as PostView} from "./views/Post";
 class PostsPage {
     /**
      * @param {PostsAPI} postsAPI
+     * @param {UserNotificationsAPI} notificationsAPI
      * @param {jQuery} el
      */
-    constructor(postsAPI, el) {
+    constructor(postsAPI, notificationsAPI, el) {
         this._postsAPI = postsAPI;
+        this._notificationsAPI = notificationsAPI;
         this._el = el;
         this._collection = new Backbone.Collection();
         this.setupEvents();
@@ -20,6 +22,7 @@ class PostsPage {
         this._collection.on("all", (eventName, arg1, arg2) => console.log("collection event", eventName, arg1, arg2));
         this._collection.on("reset", this.collectionResetHandler, this);
         this._collection.on("add", this.collectionAddHandler, this);
+        this._notificationsAPI.on("command.receive", this.commandReceivedHandler, this);
     }
 
     render () {
@@ -35,6 +38,13 @@ class PostsPage {
     hide () {
         this._el.hide();
         this.trigger("hide");
+    }
+
+    /**
+     * @returns {bool}
+     */
+    isVisible () {
+        return this._el.is(":visible");
     }
 
     hideHandler () {
@@ -57,12 +67,40 @@ class PostsPage {
     }
 
     collectionAddHandler (model) {
+        const postView = this.renderPostModel(model);
+
+        this.getPostsContainerEl().append(postView.getEl());
+    }
+
+    commandReceivedHandler (eventData) {
+        const {command: commandName, data} = eventData;
+
+        switch (commandName) {
+            case "post.added":
+                this.postAddedCommandHandler(data);
+                break;
+        }
+    }
+
+    postAddedCommandHandler (data) {
+        const postModel = new PostModel({
+            id: data.postID,
+            text: data.postText,
+            author_user_id: data.author_user_id
+        });
+        const postView = this.renderPostModel(postModel);
+
+        this.getPostsContainerEl().prepend(postView.getEl());
+    }
+
+    renderPostModel (model) {
         const postView = new PostView({
             model: model,
             el: $('<div></div>')
         });
         postView.render();
-        this.getPostsContainerEl().append(postView.getEl());
+
+        return postView;
     }
 
     /**

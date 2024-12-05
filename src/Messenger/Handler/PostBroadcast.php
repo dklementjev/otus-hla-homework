@@ -19,11 +19,19 @@ final readonly class PostBroadcast
 
     public function __invoke(Messenger\Message\PostBroadcast $message): void
     {
-        $userIds = $this->userFriendUtils->findUserIdsByFriendId($message->getUserId());
+        $userIds = $this->userFriendUtils->findUserIdsByFriendId($message->getPostUserId());
 
         foreach ($userIds as $friendId) {
             $this->messageBus->dispatch(
-                new UserNotification($message->getUserId(), 'added', ['id' => $message->getPostId()]),
+                new UserNotification(
+                    $message->getPostUserId(),
+                    'post.added',
+                    [
+                        'postID' => $message->getPostUUID(),
+                        'postText' => $message->getText(),
+                        'author_user_id' => $message->getPostUserId(),
+                    ]
+                ),
                 [
                     new AmqpStamp('user_notification.post.'.$friendId),
                 ]
