@@ -2,6 +2,7 @@
 require('strict').on()
 
 local app_name = "default"
+local app_version = "v2"
 local Log = require('log')
 local log = Log.new(app_name)
 local UUID = require('uuid')
@@ -139,6 +140,10 @@ function setupDialogUDFs()
     local other_user = box.space.users:getById(other_user_id)
     local pmSubscription = box.space.users:getPMSubscription(user, other_user)
 
+    if not pmSubscription then
+      return nil
+    end
+
     return Dialog.toJSON(self:get(pmSubscription.dialog_id))
   end
 
@@ -191,3 +196,4 @@ setupUDFs()
 
 -- Run app
 log.info(app_name .. ' app loaded')
+log.info('App version: '.. app_version)
