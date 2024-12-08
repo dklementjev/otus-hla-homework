@@ -84,8 +84,12 @@ class TarantoolImplementation implements DialogInterface
         );
     }
     
-    private function dialogFromTarantoolData(array $rawDialog): DialogModel
+    private function dialogFromTarantoolData(?array $rawDialog): ?DialogModel
     {
+        if (is_null($rawDialog)) {
+            return null;
+        }
+
         return new DialogModel(
             $rawDialog['id'],
             Uuid::fromString($rawDialog['uuid']),
