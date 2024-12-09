@@ -20,7 +20,7 @@ class TarantoolImplementation implements DialogInterface
     {
         $rawRes = $this->callUDF('box.space.dialogs:getPMForUsers', [$userId, $otherUserId], __METHOD__);
 
-        if (count($rawRes)<1) {
+        if (count($rawRes) < 1) {
             return null;
         }
 
@@ -33,13 +33,13 @@ class TarantoolImplementation implements DialogInterface
             'box.space.dialogs:createPMForUsers',
             [
                 $userId,
-                $otherUserId
+                $otherUserId,
             ],
             __METHOD__
         );
 
-        if (count($rawRes)<1) {
-            throw new \Exception("PM dialog creation failed");
+        if (count($rawRes) < 1) {
+            throw new \Exception('PM dialog creation failed');
         }
 
         return $this->dialogFromTarantoolData($rawRes[0]);
@@ -55,26 +55,26 @@ class TarantoolImplementation implements DialogInterface
         $rawRes = $this->callUDF(
             'box.space.messages:create',
             [
-                (string)(Uuid::uuid7()),
+                (string) Uuid::uuid7(),
                 $userId,
                 $dialogId,
                 $text,
-                (new \DateTime())->format("c")
+                (new \DateTime())->format('c'),
             ],
             __METHOD__
         );
 
-        if (count($rawRes)<1) {
+        if (count($rawRes) < 1) {
             return null;
         }
 
         return $this->messageFromTarantoolData($rawRes[0]);
     }
 
-    public function getRecentMessages(int $dialogId, int $limit=100): array
+    public function getRecentMessages(int $dialogId, int $limit = 100): array
     {
         $rawRes = $this->callUDF('box.space.messages:findByDialogId', [$dialogId, $limit], __METHOD__);
-        if (count($rawRes)<1) {
+        if (count($rawRes) < 1) {
             return [];
         }
 
@@ -83,7 +83,7 @@ class TarantoolImplementation implements DialogInterface
             $rawRes[0]
         );
     }
-    
+
     private function dialogFromTarantoolData(?array $rawDialog): ?DialogModel
     {
         if (is_null($rawDialog)) {
@@ -112,20 +112,20 @@ class TarantoolImplementation implements DialogInterface
 
     private function callUDF(string $functionName, array $args, ?string $logTag = null): array
     {
-        $msg = 'callUDF:' . ($logTag ?? '');
+        $msg = 'callUDF:'.($logTag ?? '');
         $this->logger->debug($msg, ['function' => $functionName, 'args' => $args]);
         $res = $this->tarantoolClient->call($functionName, ...$args);
-        $this->logger->debug($msg, ['res'=>$res]);
+        $this->logger->debug($msg, ['res' => $res]);
 
         return $res;
     }
 
     private function evaluateLua(string $luaCode, array $args, ?string $logTag = null): array
     {
-        $msg = 'evaluateLua:' . ($logTag ?? '');
+        $msg = 'evaluateLua:'.($logTag ?? '');
         $this->logger->debug($msg, ['lua' => $luaCode, 'args' => $args]);
         $res = $this->tarantoolClient->evaluate($luaCode, ...$args);
-        $this->logger->debug($msg, ['res'=>$res]);
+        $this->logger->debug($msg, ['res' => $res]);
 
         return $res;
     }
