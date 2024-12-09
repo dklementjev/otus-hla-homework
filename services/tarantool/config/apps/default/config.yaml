@@ -1,0 +1,24 @@
+app:
+  file: './apps/default/init.lua'
+
+groups:
+  group-01:
+    replicasets:
+      replicaset-01:
+        instances:
+          instance-01:
+            iproto:
+              listen:
+              - uri: '0.0.0.0:3301'
+
+credentials:
+  roles:
+    dialog_user:
+      privileges:
+        - permissions: [read, write]
+          spaces: [users, dialogs, messages]
+  users:
+    tarantool:
+      password: trntl
+      roles: [ super, dialog_user ]
+

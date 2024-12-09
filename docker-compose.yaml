@@ -26,6 +26,7 @@ services:
     volumes:
       - ./:/app
       - ./services/php-fpm/app-php.ini:/opt/bitnami/php/etc/conf.d/app.ini
+      - ./services/php-fpm/pool.www.conf:/opt/bitnami/php/etc/php-fpm.d/www.conf
     networks:
       - front
       - back
@@ -275,15 +276,17 @@ services:
       - "9002:9002"
 
   tarantool:
-    image: tarantool/tarantool:3.2
+    build:
+      dockerfile: ./services/tarantool/Dockerfile
     environment:
-      TT_CONFIG: /opt/tarantool/tt.yaml
-      TT_INSTANCE_NAME: instance-01
+     TT_APP_NAME: default
+     TT_APP_DIR: /opt/tarantool/apps
+     TT_INSTANCE_NAME: instance-01
     networks:
       - back
     volumes:
       - tarantool-data:/var/lib/tarantool
-      - ./services/tarantool/config:/opt/tarantool
+      - tarantool-app-data:/srv/tarantool
     healthcheck:
       test: [ "CMD", "status" ]
       interval: 15s
@@ -299,6 +302,7 @@ volumes:
   citus-master: ~
   citus-worker-1: ~
   tarantool-data: ~
+  tarantool-app-data: ~
 
 networks:
   front: ~
