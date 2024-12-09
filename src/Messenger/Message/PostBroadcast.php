@@ -2,20 +2,28 @@
 
 namespace App\Messenger\Message;
 
+use Ramsey\Uuid\UuidInterface;
+
 final readonly class PostBroadcast
 {
     public function __construct(
-        private int $userId,
-        private int $postId
+        private int $postUserId,
+        private UuidInterface $postUUID,
+        private string $text
     ) {}
 
-    public function getUserId(): int
+    public function getPostUserId(): int
     {
-        return $this->userId;
+        return $this->postUserId;
     }
 
-    public function getPostId(): int
+    public function getPostUUID(): UuidInterface
     {
-        return $this->postId;
+        return $this->postUUID;
+    }
+
+    public function getText(): string
+    {
+        return $this->text;
     }
 }

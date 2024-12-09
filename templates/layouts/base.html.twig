@@ -11,6 +11,7 @@
 
         <script>
             window.apiBaseUrl = "{{ url('home')|raw }}";
+            window.wsApiBaseUrl = "{{ ws_api_base_url|raw }}";
             window.urlconf = {
                 auth_login: "{{ path('auth_login') }}",
                 post_feed: "{{ path('post_feed') }}"

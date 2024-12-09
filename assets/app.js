@@ -9,6 +9,8 @@ import {AuthAPI} from "./api/AuthAPI";
 import {PostsPage} from "./posts-page";
 import {SidebarBlock} from "./sidebar";
 import {PostsAPI} from "./api/PostsAPI";
+import {UserNotificationsAPI} from "./api/UserNotificationsAPI";
+import {Backbone} from "backbone_es6";
 
 /**
  * @param {Container} container
@@ -34,6 +36,10 @@ function setupCore(container) {
         'api.posts',
         () => new PostsAPI(container.get('urlconf'), container.get('auth'))
     );
+    container.set(
+        'api.user_notifications',
+        () => new UserNotificationsAPI(window.wsApiBaseUrl)
+    )
 }
 
 class App {
@@ -41,11 +47,13 @@ class App {
      * @param {Auth} auth
      * @param {AuthAPI} authAPI
      * @param {PostsAPI} postsAPI
+     * @param {UserNotificationsAPI} notificationsAPI
      */
-    constructor(auth, authAPI, postsAPI) {
+    constructor(auth, authAPI, postsAPI, notificationsAPI) {
         this._auth = auth;
         this._authAPI = authAPI;
         this._postsAPI = postsAPI;
+        this._notificationsAPI = notificationsAPI;
         this._pageViews = new Map();
         this.setupChildViews();
         this.setupEvents();
@@ -59,6 +67,7 @@ class App {
         );
         this.postsPage = new PostsPage(
             this._postsAPI,
+            this._notificationsAPI,
             $("#posts-page")
         );
 
@@ -82,16 +91,34 @@ class App {
 
     setupEvents () {
         this.sidebar.on("action", (eventData) => this.sidebarActionHandler(eventData));
+        this._auth.on("load change", () => this.authChangeHandler());
+        this.once("rendered", async () => {
+            await this._notificationsAPI.connect();
+            this.updateNotificationsAuth()
+        });
     }
 
     render () {
         this.loginPage.render();
         this.postsPage.render()
         this.sidebar.render();
+        this.trigger("rendered");
     }
 
     sidebarActionHandler(eventData) {
         this.runMenuAction(eventData.name || null);
+    }
+
+    authChangeHandler () {
+        this.updateNotificationsAuth();
+    }
+
+    updateNotificationsAuth() {
+        if (this._auth.token) {
+            this._notificationsAPI.login(this._auth.token);
+        } else {
+            this._notificationsAPI.logout();
+        }
     }
 
     runMenuAction (actionName) {
@@ -111,6 +138,7 @@ class App {
         }
     }
 }
+Object.assign(App.prototype, Backbone.Events);
 
 const dic = Container.getInstance()
 setupCore(dic);
@@ -118,6 +146,7 @@ setupCore(dic);
 const app = new App(
     dic.get("auth"),
     dic.get('api.auth'),
-    dic.get('api.posts')
+    dic.get('api.posts'),
+    dic.get('api.user_notifications')
 );
 app.render();

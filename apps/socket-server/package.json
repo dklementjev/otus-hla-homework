@@ -1,0 +1,17 @@
+{
+  "name": "socket-server",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "debug": "^4.3.7",
+    "dotenv": "^16.4.5",
+    "rabbitmq-client": "^5.0.0",
+    "ws": "^8.18.0"
+  }
+}

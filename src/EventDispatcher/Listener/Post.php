@@ -29,6 +29,6 @@ class Post
         $post = $event->getPost();
 
         $this->messageBus->dispatch(new FriendFeedsUpdate($post->getUserId()));
-        $this->messageBus->dispatch(new PostBroadcast($post->getUserId(), $post->getId()));
+        $this->messageBus->dispatch(new PostBroadcast($post->getUserId(), $post->getUUID(), $post->getText()));
     }
 }
