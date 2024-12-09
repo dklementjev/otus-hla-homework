@@ -12,7 +12,7 @@ framework:
             # failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
             user_notification:
-              dsn: '%env(MESSENGER_TRANSPORT_USER_NOTIFICATION)%?exchange[name]=user_notification&exchange[type]=topic'
+              dsn: '%env(MESSENGER_TRANSPORT_USER_NOTIFICATION)%?exchange[name]=user_notification&exchange[type]=topic&exchange[flags]=16'
               serializer: messenger.transport.symfony_serializer
 
         routing:

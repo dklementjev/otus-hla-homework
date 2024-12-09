@@ -11,7 +11,12 @@ class Auth {
      */
     constructor(tokenStorage) {
         this._tokenStorage = tokenStorage;
+        this.setupEvents();
         this.load();
+    }
+
+    setupEvents () {
+        this.on("all", (eventName, eventData) => console.log("Auth event", eventName, eventData));
     }
 
     load() {

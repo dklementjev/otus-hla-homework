@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\DTO;
+use App\Model\User;
 use App\Utils;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +20,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserController extends BaseController
 {
     public function __construct(
+        protected readonly Security $security,
         protected readonly Utils\Model\User $userUtils,
         SerializerInterface $serializer,
         #[Autowire(param: 'controller.default_json_encode_options')]
@@ -70,6 +73,17 @@ class UserController extends BaseController
                 'default_view'
             ),
             json: true
+        );
+    }
+
+    #[Route(path: '/me', methods: ['GET'], )]
+    public function me(Request $request): Response
+    {
+        /** @var User */
+        $user = $this->security->getUser();
+
+        return new JsonResponse(
+            ['id' => $user?->getId()]
         );
     }
 }
