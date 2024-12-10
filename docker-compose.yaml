@@ -265,6 +265,23 @@ services:
       - traefik.http.routers.ws.rule=PathPrefix(`/`)
       - traefik.enable=1
 
+  user-service:
+    build:
+      context: apps/user-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./apps/user-service/src:/app/src
+      - ./apps/user-service/.env.local:/app/.env.local
+    networks:
+      - back
+    command: ["deno", "run", "--allow-net", "--allow-env", "--allow-read", "--env-file=.env", "--env-file=.env.local", "src/app.js"]
+    healthcheck:
+      test: [ "CMD", "deno", "run", "--allow-net=127.0.0.1", "--allow-env=PORT", "--env-file=.env", "--env-file=.env.local", "src/healthcheck.js" ]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
   traefik:
     image: traefik:3.2
     volumes:

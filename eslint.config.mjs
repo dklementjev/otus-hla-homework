@@ -27,5 +27,13 @@ export default [
       }
     }
   },
+  {
+    files: ["apps/user-service/**/*.js"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      }
+    }
+  },
   pluginJs.configs.recommended,
 ];
