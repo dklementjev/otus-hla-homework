@@ -1,3 +1,4 @@
+/* global Deno */
 import Debug from "debug";
 import Koa from "koa";
 import { Client as PostgreClient} from "https://deno.land/x/postgres/mod.ts";
@@ -12,7 +13,7 @@ async function pingAction(ctx) {
     ctx.body = "OK";
 }
 
-async function tokenAction(ctx, token: String) {
+async function tokenAction(ctx, token) {
     const sth = await dbConnection.queryArray(
         'SELECT id, user_id FROM app_access_tokens WHERE token=$token',
         {token}
