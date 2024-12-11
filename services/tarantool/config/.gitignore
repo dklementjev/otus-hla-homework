@@ -1,0 +1,5 @@
+.rocks/share
+apps/default/data
+apps/default/var
+var/lib
+var/run
