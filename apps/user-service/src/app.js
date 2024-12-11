@@ -10,7 +10,7 @@ const httpDebug = Debug("app.http");
 const PORT = Deno.env.get('PORT');
 
 async function pingAction(ctx) {
-    ctx.body = "OK";
+    ctx.body = 'OK';
 }
 
 async function tokenAction(ctx, token) {
