@@ -27,17 +27,25 @@ jobs:
               - 'public/index.php'
             frontend_js:
               - 'assets/**.js'
-
+            any_js:
+              - '**.js'
+      # PHP
       - name: PHP-CS-Fixer
         if: steps.changed_files.outputs.php == 'true'
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
           args: --config=.php-cs-fixer.dist.php --diff --dry-run
 
+      # JS
       - uses: actions/setup-node@v4
+        if: steps.changed_files.outputs.any_js == 'true'
         with:
           node-version: 20
-      - run: npm ci
+
+      - name: npm ci
+        if: steps.changed_files.outputs.frontend_js == 'true'
+        run: npm ci
+
       - name: ESLint
         if: steps.changed_files.outputs.frontend_js == 'true'
         uses: sibiraj-s/action-eslint@v3
