@@ -46,6 +46,9 @@ jobs:
         if: steps.changed_files.outputs.frontend_js == 'true'
         run: npm ci
 
-      - name: ESLint
+      - name: Frontend ESLint
         if: steps.changed_files.outputs.frontend_js == 'true'
         uses: sibiraj-s/action-eslint@v3
+        with:
+          ignore-patterns: |
+            apps/
