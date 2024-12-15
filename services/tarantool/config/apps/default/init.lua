@@ -51,6 +51,10 @@ end
 
 local Dialog = {}
 function Dialog.toJSON  (d)
+  if not d then
+    return nil
+  end
+
   return {
     id=d.id,
     uuid=tostring(d.uuid),
@@ -62,6 +66,10 @@ end
 
 local DialogMessage = {}
 function DialogMessage.toJSON(dm)
+  if not dm then
+    return nil
+  end
+
   return {
     id=dm.id,
     uuid=tostring(dm.uuid),
