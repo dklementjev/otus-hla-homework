@@ -1,0 +1,78 @@
+spaces:
+  users:
+    engine: memtx
+    is_local: false
+    temporary: false
+    format:
+      - {name: id, type: unsigned, is_nullable: false }
+      - {name: uuid, type: uuid, is_nullable: false }
+      - {name: nickname, type: string, is_nullable: true}
+      - {name: subscriptions, type: array, is_nullable: true}
+    indexes:
+      - name: user_id
+        unique: true
+        type: TREE
+        parts:
+          - path: id
+            type: unsigned
+            is_nullable: false
+
+  dialogs:
+    engine: memtx
+    is_local: false
+    temporary: false
+    format:
+      - {name: id, type: unsigned, is_nullable: false}
+      - {name: uuid, type: uuid, is_nullable: false}
+      - {name: is_groupchat, type: boolean, is_nullable: false}
+      - {name: created_at, type: datetime, is_nullable: false}
+      - {name: participants, type: array, is_nullable: true}
+    indexes:
+      - name: dialog_id
+        type: TREE
+        unique: true
+        parts:
+          - path: id
+            type: unsigned
+            is_nullable: false
+      - name: dialog_uuid
+        type: TREE
+        unique: true
+        parts:
+          - path: uuid
+            type: uuid
+            is_nullable: false
+
+  messages:
+    engine: memtx
+    is_local: false
+    temporary: false
+    format:
+      - {name: id, type: unsigned, is_nullable: false}
+      - {name: uuid, type: uuid, is_nullable: false}
+      - {name: user_id, type: unsigned, is_nullable: false}
+      - {name: dialog_id, type: unsigned, is_nullable: false}
+      - {name: message, type: string, is_nullable: false}
+      - {name: created_at, type: datetime, is_nullable: false}
+    indexes:
+      - name: message_id
+        type: TREE
+        unique: true
+        parts:
+          - path: id
+            type: unsigned
+            is_nullable: false
+      - name: dialog_messages
+        type: TREE
+        unique: false
+        parts:
+          - path: dialog_id
+            type: unsigned
+            is_nullable: false
+          - path: created_at
+            type: datetime
+            is_nullable: false
+
+sequences:
+  dialog_id_seq: {}
+  message_id_seq: {}

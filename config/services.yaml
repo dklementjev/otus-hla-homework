@@ -13,6 +13,9 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+        bind:
+            $tarantoolClient: "@tarantool.client"
+
     _instanceof:
         App\Repository\BaseRepository:
             tags:
@@ -54,7 +57,8 @@ services:
         class: Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher
 
     App\Utils\Model\DialogInterface:
-        class: App\Utils\Model\Dialog\SQLImplementation
+#        class: App\Utils\Model\Dialog\SQLImplementation
+        class: App\Utils\Model\Dialog\TarantoolImplementation
 
     App\Utils\Model\Post:
         arguments:
