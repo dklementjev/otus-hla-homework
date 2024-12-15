@@ -2,7 +2,7 @@
 require('strict').on()
 
 local app_name = "default"
-local app_version = "v2"
+local app_version = "v10"
 local Log = require('log')
 local log = Log.new(app_name)
 local UUID = require('uuid')
@@ -185,7 +185,7 @@ function setupMessagesUDFs()
 
   -- TODO: API
   messages_mt.findByDialogId = function (self, dialog_id, limit)
-    local messages = box.space.messages.index.dialog_messages:select({dialog_id}, {iterator=box.index.LE, limit=limit or 100})
+    local messages = box.space.messages.index.dialog_messages:select({dialog_id}, {iterator=box.index.REQ, limit=limit or 100})
 
     return Fun.map(DialogMessage.toJSON, messages):totable()
   end
