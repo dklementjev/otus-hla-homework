@@ -1,0 +1,20 @@
+{
+  "name": "dialog-service",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "@koa/bodyparser": "^5.1.1",
+    "debug": "^4.4.0",
+    "dotenv": "^16.4.7",
+    "koa": "~2.14",
+    "koa-route": "^4.0.1",
+    "tarantool-driver": "git://github.com/tarantool/node-tarantool-driver#ed972dd8ac666dc4b3953e582115bda7b570e476"
+  }
+}
