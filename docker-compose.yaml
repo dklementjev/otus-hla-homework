@@ -281,6 +281,37 @@ services:
       timeout: 3s
       retries: 5
       start_period: 5s
+    depends_on:
+      citus-master:
+        condition: service_healthy
+
+  dialog-service:
+    build:
+      context: ./apps/dialog-service
+      dockerfile: Dockerfile
+    environment:
+      - "PORT=3000"
+      - "DEBUG=app,app.*,api.*,tarantool*"
+    init: true
+    volumes:
+      - ./apps/dialog-service/src:/app/src
+      - ./apps/dialog-service/.env.local:/app/.env.local
+    networks:
+      - back
+    ports:
+      - "13000:3000"
+    command: ["node", "src/app.js"]
+    healthcheck:
+      test: [ "CMD", "node", "src/healthcheck.js" ]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      tarantool:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
 
   traefik:
     image: traefik:3.2
@@ -301,6 +332,8 @@ services:
      TT_INSTANCE_NAME: instance-01
     networks:
       - back
+#    ports:
+#      - "23301:3301"
     volumes:
       - tarantool-data:/var/lib/tarantool
       - tarantool-app-data:/srv/tarantool
