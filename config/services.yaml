@@ -38,6 +38,12 @@ services:
         tags:
             - 'controller.service_arguments'
 
+    App\Controller\DialogController:
+        arguments:
+            $proxiedBaseUrl: '%env(DIALOG_SERVICE_BASE_URL)%'
+        tags:
+            - 'controller.service_arguments'
+
     App\Controller\UIController:
         arguments:
             $wsApiBaseUrl: '%env(WS_API_BASE_URL)%'

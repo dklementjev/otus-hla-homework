@@ -24,4 +24,3 @@ security:
     access_control:
         - {path: '^/post', roles: ROLE_USER}
         - {path: '^/friend', roles: ROLE_USER}
-        - {path: '^/dialog', roles: ROLE_USER}
