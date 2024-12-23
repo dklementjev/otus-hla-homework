@@ -121,6 +121,7 @@ app
         httpDebug('> [%s] %s %s', requestId, req.method, req.url);
         await next();
         httpDebug('< [%s] %s %s (%s)', requestId, res.status, res.message, req.url);
+        ctx.response.append('x-request-id', requestId);
     })
     .use(R.get('/', pingAction))
     .use(parseBearerToken)
