@@ -69,7 +69,7 @@ class UserController extends BaseController
 
         return new JsonResponse(
             $this->jsonSerialize(
-                ['items2' => $users],
+                ['items' => $users],
                 'default_view'
             ),
             json: true
