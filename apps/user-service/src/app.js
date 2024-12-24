@@ -39,10 +39,12 @@ const dbConnection = new PostgreClient(dbOptions)
 app.use(async (ctx, next) => {
     const req = ctx.request;
     const res = ctx.response;
+    const requestId = ctx.request.header['x-request-id'] || '<empty>';
 
-    httpDebug('> %s %s', req.method, req.url);
+    httpDebug('> [%s] %s %s', requestId, req.method, req.url);
     await next();
-    httpDebug('< %s %s', res.status, res.message);
+    httpDebug('< [%s] %s %s', requestId, res.status, res.message);
+    ctx.response.append('x-request-id', requestId);
 });
 app.use(R.get('/', pingAction))
 app.use(R.get('/token/:token', tokenAction));
