@@ -136,6 +136,36 @@ services:
     mem_reservation: 512M
     mem_limit: 2G
 
+  db-slave3:
+    depends_on:
+      - db
+    image: bitnami/postgresql:16.3.0
+    secrets:
+      - postgresql-password
+      - postgresql-replication-password
+    environment:
+      - POSTGRESQL_PASSWORD_FILE=/run/secrets/postgresql-password
+      - POSTGRESQL_MASTER_HOST=db
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=replicator
+      - POSTGRESQL_REPLICATION_PASSWORD_FILE=/run/secrets/postgresql-replication-password
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+    volumes:
+      - db-data-slave3:/bitnami/postgresql
+    networks:
+      - back
+      - db
+    cpus: 2
+    mem_reservation: 512M
+    mem_limit: 2G
+
+  db-haproxy:
+    image: haproxy:3.1
+    volumes:
+      - ./services/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - db
+
   redis-cache:
     image: bitnami/redis:6.2
     environment:
@@ -281,6 +311,7 @@ services:
       - ./apps/user-service/.env.local:/app/.env.local
     networks:
       - back
+      - db
     command: ["deno", "run", "--allow-net", "--allow-env", "--allow-read", "--env-file=.env", "--env-file=.env.local", "src/app.js"]
     healthcheck:
       test: [ "CMD", "deno", "run", "--allow-net=127.0.0.1", "--allow-env=PORT", "--env-file=.env", "--env-file=.env.local", "src/healthcheck.js" ]
@@ -289,6 +320,8 @@ services:
       retries: 5
       start_period: 5s
     depends_on:
+      db-haproxy:
+        condition: service_started
       citus-master:
         condition: service_healthy
 
@@ -353,6 +386,7 @@ volumes:
   db-data: ~
   db-data-slave1: ~
   db-data-slave2: ~
+  db-data-slave3: ~
   healthcheck-volume: ~
   citus-master: ~
   citus-worker-1: ~
