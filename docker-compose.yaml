@@ -15,6 +15,11 @@ services:
       - back
     mem_reservation: 128M
     mem_limit: 512M
+    depends_on:
+      dialog-service:
+        condition: service_started
+      user-service:
+        condition: service_started
 
   php-fpm:
     build:
