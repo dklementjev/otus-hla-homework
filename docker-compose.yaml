@@ -9,6 +9,7 @@ services:
     ports:
       - "8080:80"
       - "8443:443"
+      - "8081:81"
     networks:
       - front
       - back
@@ -266,6 +267,7 @@ services:
       - traefik.enable=1
 
   user-service:
+    scale: 3
     build:
       context: apps/user-service
       dockerfile: Dockerfile
@@ -298,8 +300,6 @@ services:
       - ./apps/dialog-service/.env.local:/app/.env.local
     networks:
       - back
-    ports:
-      - "13000:3000"
     command: ["node", "src/app.js"]
     healthcheck:
       test: [ "CMD", "node", "src/healthcheck.js" ]
