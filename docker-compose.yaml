@@ -18,7 +18,9 @@ services:
     depends_on:
       dialog-service:
         condition: service_started
-      user-service:
+      user-service-manual-1:
+        condition: service_started
+      user-service-manual-2:
         condition: service_started
 
   php-fpm:
@@ -302,7 +304,6 @@ services:
       - traefik.enable=1
 
   user-service:
-    scale: 3
     build:
       context: apps/user-service
       dockerfile: Dockerfile
@@ -324,6 +325,48 @@ services:
         condition: service_started
       citus-master:
         condition: service_healthy
+
+  user-service-manual-1:
+    build:
+      context: apps/user-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./apps/user-service/src:/app/src
+      - ./apps/user-service/.env.local:/app/.env.local
+    networks:
+      - back
+      - db
+    command: [ "deno", "run", "--allow-net", "--allow-env", "--allow-read", "--env-file=.env", "--env-file=.env.local", "src/app.js" ]
+    healthcheck:
+      test: [ "CMD", "deno", "run", "--allow-net=127.0.0.1", "--allow-env=PORT", "--env-file=.env", "--env-file=.env.local", "src/healthcheck.js" ]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      db-haproxy:
+        condition: service_started
+
+  user-service-manual-2:
+    build:
+      context: apps/user-service
+      dockerfile: Dockerfile
+    volumes:
+      - ./apps/user-service/src:/app/src
+      - ./apps/user-service/.env.local:/app/.env.local
+    networks:
+      - back
+      - db
+    command: ["deno", "run", "--allow-net", "--allow-env", "--allow-read", "--env-file=.env", "--env-file=.env.local", "src/app.js"]
+    healthcheck:
+      test: [ "CMD", "deno", "run", "--allow-net=127.0.0.1", "--allow-env=PORT", "--env-file=.env", "--env-file=.env.local", "src/healthcheck.js" ]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    depends_on:
+      db-haproxy:
+        condition: service_started
 
   dialog-service:
     build:
